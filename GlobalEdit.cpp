@@ -4,22 +4,22 @@
 
 #include "GlobalEdit.h"
 
-int GlobalEdit::global_distance(std::string cnd, std::string dct) {
-    int i, j;
+int GlobalEdit::edit_distance(std::string cnd, std::string dct, bool global) {
+    int i, j, temp;
     int ins_c, del_c, mtc_c, rpl_c;
     int res;
-    std::vector<std::vector<int>> *table = new std::vector<std::vector<int>>;
-    std::vector<int> *temp_row = new std::vector<int>;
+    auto table = new std::vector<std::vector<int>>;
+    auto temp_row = new std::vector<int>;
     cnd = " " + cnd;
     dct = " " + dct;
 
-    int cnd_len = cnd.length();
-    int dct_len = dct.length();
+    unsigned long cnd_len = cnd.length();
+    unsigned long dct_len = dct.length();
 
     // top row
     temp_row->push_back(0);
     for (j = 1; j < cnd_len; ++j) {
-        temp_row->push_back((*temp_row)[j-1] + DELETE_C);
+        temp_row->push_back(global ? (*temp_row)[j-1] + DELETE_C : 0);
     }
     table->push_back(*temp_row);
     temp_row->clear();
@@ -30,7 +30,7 @@ int GlobalEdit::global_distance(std::string cnd, std::string dct) {
     // left column
     for (i = 1; i < dct_len; ++i) {
 
-        temp_row->push_back((*table)[i-1][0] + INSERT_C);
+        temp_row->push_back(global ? (*table)[i-1][0] + INSERT_C : 0);
 
 
         for (j = 1; j < cnd_len; ++j) {
@@ -40,11 +40,11 @@ int GlobalEdit::global_distance(std::string cnd, std::string dct) {
             mtc_c = (*table)[i-1][j-1] + MATCH_C;
 
             if (cnd[j] == dct[i]) {
-                temp_row->push_back( std::max(std::max(ins_c,del_c),std::max(rpl_c,mtc_c) ) );
+                temp = std::max(std::max(ins_c,del_c),std::max(rpl_c,mtc_c));
             } else {
-                temp_row->push_back( std::max(std::max(ins_c,del_c),rpl_c ) );
+                temp =  std::max(std::max(ins_c,del_c),rpl_c);
             }
-
+            temp_row->push_back(global ? temp : std::max(temp,0));
         }
         table->push_back(*temp_row);
         temp_row->clear();
@@ -52,7 +52,7 @@ int GlobalEdit::global_distance(std::string cnd, std::string dct) {
 
     for (i = 0; i < dct_len; ++i) {
         for (j = 0; j < cnd_len; ++j) {
-            printf("%d ", (*table)[i][j]);
+            printf("%2d ", (*table)[i][j]);
         }
         printf("\n");
     }

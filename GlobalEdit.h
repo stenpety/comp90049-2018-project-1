@@ -9,9 +9,9 @@
 #include <vector>
 
 #define MATCH_C 1
-#define INSERT_C -1
-#define DELETE_C -1
-#define REPLACE_C -1
+#define INSERT_C (-1)
+#define DELETE_C (-1)
+#define REPLACE_C (-1)
 
 class GlobalEdit {
 
