@@ -16,7 +16,7 @@
 class GlobalEdit {
 
 public:
-    static int global_distance(std::string cnd, std::string dct);
+    static int edit_distance(std::string, std::string, bool);
 
 
 };
