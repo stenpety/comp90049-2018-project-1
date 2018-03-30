@@ -8,6 +8,8 @@
 #include <string>
 
 class Soundex {
+private:
+    static const int TRUNC_TO = 4;
 
 public:
     std::string *sndx_convert(std::string);
