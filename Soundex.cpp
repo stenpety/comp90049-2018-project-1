@@ -10,7 +10,7 @@ std::string *Soundex::sndx_convert(std::string cnd) {
 
     res->append(cnd.substr(0,1));
 
-
+    // Replace chars with numbers as per Soundex table
     for (i = 1; i < cnd.length(); ++i) {
         switch (cnd[i]) {
             case 'a': case 'e': case 'h': case 'i': case 'o': case 'u': case 'w': case 'y':
@@ -39,11 +39,14 @@ std::string *Soundex::sndx_convert(std::string cnd) {
         }
     }
 
+    // Remove zeroes
     for (i = 0; i < res->length(); ++i) {
         if ((*res)[i] == '0') {
             res->erase((unsigned long)i, 1);
         }
     }
+
+    // Remove duplicates
     i = 0;
     while (i < res->length()-1) {
         if ((*res)[i] == (*res)[i+1]) {
@@ -53,8 +56,9 @@ std::string *Soundex::sndx_convert(std::string cnd) {
         }
     }
 
-    if (res->length() > 4) {
-        *res = res->substr(0,4);
+    // Truncate to 4 symbols
+    if (res->length() > TRUNC_TO) {
+        *res = res->substr(0, TRUNC_TO);
     }
 
     return res;
