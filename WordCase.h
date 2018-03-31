@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include "GlobalConst.h"
 
 
 class WordCase {
@@ -31,6 +32,10 @@ public:
     void setCorrect_w(const std::string &correct_w);
 
     void setMisspell_w(const std::string &misspell_w);
+
+    void add_option(std::string, gcnst::Methods);
+
+    void clear_options(gcnst::Methods);
 
 };
 
