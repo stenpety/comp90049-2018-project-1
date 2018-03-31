@@ -4,7 +4,10 @@
 
 #include "WordCase.h"
 
-WordCase::WordCase() {
+WordCase::WordCase(const std::string misspell_w, const std::string correct_w) {
+    this->misspell_w = misspell_w;
+    this->correct_w = correct_w;
+
     ged_opts = new std::vector<std::string>;
     ged_precision = 0.0;
 
@@ -65,6 +68,14 @@ void WordCase::clear_options(gcnst::Methods method) {
     }
 }
 
+const std::string &WordCase::getCorrect_w() const {
+    return correct_w;
+}
+
+const std::string &WordCase::getMisspell_w() const {
+    return misspell_w;
+}
+
 double WordCase::update_precision(gcnst::Methods method) {
     unsigned long words_sz = 0;
     bool found = false;
@@ -109,5 +120,7 @@ double WordCase::getSndx_precision() {
     sndx_precision = update_precision(gcnst::SNDX);
     return sndx_precision;
 }
+
+
 
 

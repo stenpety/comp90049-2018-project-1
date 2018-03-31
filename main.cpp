@@ -1,10 +1,12 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <vector>
 
 #include "GlobalEdit.h"
 #include "NGram.h"
 #include "Soundex.h"
+#include "WordCase.h"
 
 using namespace std;
 
@@ -13,16 +15,22 @@ int main(int argc, char **argv) {
     string addr_misspell = "/Users/stenpety/test/knowtech/misspell.txt";
     string addr_fcorrect = "/Users/stenpety/test/knowtech/correct.txt";
     string addr_fdict = "/Users/stenpety/test/knowtech/dictionary.txt";
-    string line;
+    string ln_misspell, ln_correct;
 
-    /*
+    auto cases_db = new vector<WordCase>;
+
+
     ifstream fmisspell (addr_misspell.c_str());
+    ifstream fcorrect (addr_fcorrect.c_str());
 
-    while (getline(fmisspell, line)) {
-        cout << line << endl;
+    while (getline(fmisspell, ln_misspell)) {
+        getline(fcorrect, ln_correct);
+        WordCase temp = WordCase(ln_misspell, ln_correct);
     }
-     */
 
+
+
+    delete(cases_db);
     //GlobalEdit ge_temp = GlobalEdit();
     //printf("GED = %d\n", ge_temp.edit_distance("lended", "deaden", false));
 

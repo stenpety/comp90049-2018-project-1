@@ -12,8 +12,8 @@
 
 class WordCase {
 private:
-    std::string correct_w;
     std::string misspell_w;
+    std::string correct_w;
 
     std::vector<std::string> *ged_opts;
     double ged_precision;
@@ -24,10 +24,12 @@ private:
     std::vector<std::string> *sndx_opts;
     double sndx_precision;
 
-public:
-    WordCase();
+    double update_precision(gcnst::Methods);
 
-    virtual ~WordCase();
+public:
+    WordCase(std::string, std::string);
+
+    ~WordCase();
 
     void setCorrect_w(const std::string &correct_w);
 
@@ -36,6 +38,16 @@ public:
     void add_option(std::string, gcnst::Methods);
 
     void clear_options(gcnst::Methods);
+
+    const std::string &getCorrect_w() const;
+
+    const std::string &getMisspell_w() const;
+
+    double getGed_precision();
+
+    double getNgram_precision();
+
+    double getSndx_precision();
 
 };
 
