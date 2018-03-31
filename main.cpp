@@ -35,11 +35,13 @@ int main(int argc, char **argv) {
     printf("2-Gram : %d\n", ng2_temp.n_gram_distance("lended","lent"));
      */
 
+    /*
     Soundex sndx_temp = Soundex();
     string *snd_str = sndx_temp.sndx_convert("lemonadelemonadelemonade");
     cout << *snd_str << endl;
 
     delete(snd_str);
+     */
 
     return 0;
 }

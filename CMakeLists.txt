@@ -3,4 +3,4 @@ project(comp90049_2018_project_1)
 
 set(CMAKE_CXX_STANDARD 11)
 
-add_executable(comp90049_2018_project_1 main.cpp GlobalEdit.cpp GlobalEdit.h NGram.cpp NGram.h Soundex.cpp Soundex.h)
+add_executable(comp90049_2018_project_1 main.cpp GlobalEdit.cpp GlobalEdit.h NGram.cpp NGram.h Soundex.cpp Soundex.h WordCase.cpp WordCase.h)

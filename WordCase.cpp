@@ -1,0 +1,30 @@
+//
+// Created by Petr Stenin on 31/03/2018.
+//
+
+#include "WordCase.h"
+
+WordCase::WordCase() {
+    ged_opts = new std::vector<std::string>;
+    ged_precision = 0.0;
+
+    ngram_opts = new std::vector<std::string>;
+    ngram_precision = 0.0;
+
+    sndx_opts = new std::vector<std::string>;
+    sndx_precision = 0.0;
+}
+
+WordCase::~WordCase() {
+    delete(ged_opts);
+    delete(ngram_opts);
+    delete(sndx_opts);
+}
+
+void WordCase::setCorrect_w(const std::string &correct_w) {
+    WordCase::correct_w = correct_w;
+}
+
+void WordCase::setMisspell_w(const std::string &misspell_w) {
+    WordCase::misspell_w = misspell_w;
+}
