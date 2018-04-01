@@ -17,23 +17,22 @@ int main(int argc, char **argv) {
     string ln_misspell, ln_correct;
 
     auto cases_db = new vector<WordCase>;
-    //gcnst::GConst gconst;
 
+    ifstream fmisspell (gcnst::GConst::ADDR_MSSPL.c_str());
+    ifstream fcorrect (gcnst::GConst::ADDR_CRCT.c_str());
 
-    ifstream fmisspell ("/Users/stenpety/test/knowtech/misspell.txt");//(gconst.ADDR_MSSPL.c_str());
-    ifstream fcorrect ("/Users/stenpety/test/knowtech/correct.txt");//(gconst.ADDR_CRCT.c_str());
-
+    WordCase temp = WordCase();
 
     while (getline(fmisspell, ln_misspell)) {
         getline(fcorrect, ln_correct);
-        WordCase temp = WordCase(ln_misspell, ln_correct);
-        cout << temp.toString() << endl;
+        temp.setMisspell_w(ln_misspell);
+        temp.setCorrect_w(ln_correct);
         cases_db->push_back(temp);
-
     }
 
-    cout << "100th element: " << (*cases_db)[100].getMisspell_w() << " " << (*cases_db)[100].getCorrect_w() << endl;
 
+    // for test
+    cout << "n-th pair: " << (*cases_db)[100].toString() << endl;
 
 
     delete(cases_db);
