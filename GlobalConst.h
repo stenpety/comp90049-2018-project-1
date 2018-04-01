@@ -10,7 +10,7 @@
 namespace gcnst {
     enum Methods {GED, LED, NGRAM, SNDX};
 
-    /*
+
     class GConst {
     public:
         GConst();
@@ -20,11 +20,6 @@ namespace gcnst {
         static const std::string ADDR_CRCT;
         static const std::string ADDR_DICT;
     };
-
-    const std::string GConst::ADDR_MSSPL = "/Users/stenpety/test/knowtech/misspell.txt";
-    const std::string GConst::ADDR_CRCT = "/Users/stenpety/test/knowtech/correct.txt";
-    const std::string GConst::ADDR_DICT = "/Users/stenpety/test/knowtech/dictionary.txt";
-     */
 }
 
 

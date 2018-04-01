@@ -4,9 +4,7 @@
 
 #include "WordCase.h"
 
-WordCase::WordCase(const std::string misspell_w, const std::string correct_w) {
-    this->misspell_w = misspell_w;
-    this->correct_w = correct_w;
+WordCase::WordCase() {
 
     ged_opts = new std::vector<std::string>;
     ged_precision = 0.0;
@@ -128,3 +126,5 @@ double WordCase::getSndx_precision() {
 const std::string WordCase::toString() {
     return "m: " + misspell_w + "; c: " + correct_w +";";
 }
+
+

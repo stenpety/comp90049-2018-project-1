@@ -28,7 +28,7 @@ private:
     double update_precision(gcnst::Methods);
 
 public:
-    WordCase(std::string, std::string);
+    WordCase();
 
     ~WordCase();
 
