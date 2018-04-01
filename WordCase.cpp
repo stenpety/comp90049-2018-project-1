@@ -19,9 +19,13 @@ WordCase::WordCase(const std::string misspell_w, const std::string correct_w) {
 }
 
 WordCase::~WordCase() {
+    //std::cout << "WordCase Destructor start" << std::endl;
+    /*
     delete(ged_opts);
     delete(ngram_opts);
     delete(sndx_opts);
+     */
+    //std::cout << "WordCase Destructor finish" << std::endl;
 }
 
 void WordCase::setCorrect_w(const std::string &correct_w) {
@@ -121,6 +125,6 @@ double WordCase::getSndx_precision() {
     return sndx_precision;
 }
 
-
-
-
+const std::string WordCase::toString() {
+    return "m: " + misspell_w + "; c: " + correct_w +";";
+}

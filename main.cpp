@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "GlobalConst.h"
 #include "GlobalEdit.h"
 #include "NGram.h"
 #include "Soundex.h"
@@ -12,44 +13,30 @@ using namespace std;
 
 int main(int argc, char **argv) {
 
-    string addr_misspell = "/Users/stenpety/test/knowtech/misspell.txt";
-    string addr_fcorrect = "/Users/stenpety/test/knowtech/correct.txt";
-    string addr_fdict = "/Users/stenpety/test/knowtech/dictionary.txt";
+
     string ln_misspell, ln_correct;
 
     auto cases_db = new vector<WordCase>;
+    //gcnst::GConst gconst;
 
 
-    ifstream fmisspell (addr_misspell.c_str());
-    ifstream fcorrect (addr_fcorrect.c_str());
+    ifstream fmisspell ("/Users/stenpety/test/knowtech/misspell.txt");//(gconst.ADDR_MSSPL.c_str());
+    ifstream fcorrect ("/Users/stenpety/test/knowtech/correct.txt");//(gconst.ADDR_CRCT.c_str());
+
 
     while (getline(fmisspell, ln_misspell)) {
         getline(fcorrect, ln_correct);
         WordCase temp = WordCase(ln_misspell, ln_correct);
+        cout << temp.toString() << endl;
+        cases_db->push_back(temp);
+
     }
+
+    cout << "100th element: " << (*cases_db)[100].getMisspell_w() << " " << (*cases_db)[100].getCorrect_w() << endl;
 
 
 
     delete(cases_db);
-    //GlobalEdit ge_temp = GlobalEdit();
-    //printf("GED = %d\n", ge_temp.edit_distance("lended", "deaden", false));
-
-    /*
-    NGram ng3_temp = NGram(3);
-    printf("3-Gram : %d\n", ng3_temp.n_gram_distance("lended","deaden"));
-
-
-    NGram ng2_temp = NGram(2);
-    printf("2-Gram : %d\n", ng2_temp.n_gram_distance("lended","lent"));
-     */
-
-    /*
-    Soundex sndx_temp = Soundex();
-    string *snd_str = sndx_temp.sndx_convert("lemonadelemonadelemonade");
-    cout << *snd_str << endl;
-
-    delete(snd_str);
-     */
 
     return 0;
 }

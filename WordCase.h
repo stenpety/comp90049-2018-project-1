@@ -7,6 +7,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 #include "GlobalConst.h"
 
 
@@ -48,6 +49,8 @@ public:
     double getNgram_precision();
 
     double getSndx_precision();
+
+    const std::string toString();
 
 };
 
