@@ -18,9 +18,10 @@
 class GlobalEdit {
 private:
     static int edit_distance(const std::string &, const std::string &, bool);
+
 public:
     static void get_options(WordCase &, const std::vector<std::string> *);
-
+    static int edit_distance_fast(const std::string &, const std::string &, bool);
 
 };
 
