@@ -4,8 +4,6 @@
 
 #include "NGram.h"
 
-NGram::NGram(int n) : n(n) {}
-
 int NGram::n_gram_distance(std::string cnd, std::string dct) {
 
     int res = 0, cmn = 0;
@@ -17,12 +15,12 @@ int NGram::n_gram_distance(std::string cnd, std::string dct) {
     dct = " " + dct + " ";
 
 
-    for (i = 0; i < cnd.length()-n+1; ++i) {
-        cnd_sbst->push_back(cnd.std::string::substr(i, (unsigned long)n) );
+    for (i = 0; i < cnd.length()- N + 1; ++i) {
+        cnd_sbst->push_back(cnd.std::string::substr(i, (unsigned long)N) );
     }
 
-    for (i = 0; i < dct.length()-n+1; ++i) {
-        dct_sbst->push_back(dct.std::string::substr(i, (unsigned long)n) );
+    for (i = 0; i < dct.length()- N + 1; ++i) {
+        dct_sbst->push_back(dct.std::string::substr(i, (unsigned long)N) );
     }
     res += (cnd_sbst->size() + dct_sbst->size());
 
@@ -44,3 +42,27 @@ int NGram::n_gram_distance(std::string cnd, std::string dct) {
     delete(dct_sbst);
     return res;
 }
+
+void NGram::get_options(WordCase &word_case, const std::vector<std::string> *dict) {
+    int max_dst = std::numeric_limits<int>::max();
+    int temp_dst;
+
+    for(std::string w_dict : *dict) {
+        temp_dst = n_gram_distance(word_case.getMisspell_w(), w_dict);
+        if (temp_dst < max_dst) {
+            word_case.clear_options(gcnst::NGRAM);
+            word_case.add_option(w_dict, gcnst::NGRAM);
+            max_dst = temp_dst;
+        } else if (temp_dst == max_dst) {
+            word_case.add_option(w_dict, gcnst::NGRAM);
+        }
+    }
+}
+
+/*
+void NGram::setN(int n) {
+    NGram::n = n;
+}
+ */
+
+NGram::NGram() {}

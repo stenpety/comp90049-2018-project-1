@@ -36,19 +36,29 @@ int main(int argc, char **argv) {
         dict->push_back(ln_dict);
     }
 
+    //NGram::setN(3);
 
 
     // for test
 
     for (WordCase w_case : (*cases_db)) {
-        cout << "n-th pair: " << w_case.toString() << endl;
+        cout << "\nn-th pair: " << w_case.toString() << endl;
         GlobalEdit::get_options(w_case, dict);
+        NGram::get_options(w_case, dict);
 
-
-        for (string tmp : (*(*cases_db)[1].getGed_opts())) {
-            cout << tmp << endl;
+        cout << "Ged opts:" <<endl;
+        for (string tmp : *(w_case.getGed_opts()) ) {
+            cout << tmp << " ";
         }
+        cout << endl;
 
+        cout << "N-Gram opts:" <<endl;
+        for (string tmp : *(w_case.getNgram_opts()) ) {
+            cout << tmp << " ";
+        }
+        cout << endl;
+
+        cout << "Prec. GED: "<< w_case.getGed_precision() << "; Prec. N-Gram: " << w_case.getNgram_precision() << endl;
     }
 
     /*

@@ -7,14 +7,21 @@
 
 #include <string>
 #include <vector>
+#include <limits>
+#include "WordCase.h"
+
+#define N 3
 
 class NGram {
 private:
-    int n;
+    //static int N;
+    static int n_gram_distance(std::string, std::string);
 public:
-    explicit NGram(int n);
-    int n_gram_distance(std::string, std::string);
+    NGram();
 
+    static void get_options(WordCase &, const std::vector<std::string> *);
+
+    static void setN(int n);
 };
 
 
