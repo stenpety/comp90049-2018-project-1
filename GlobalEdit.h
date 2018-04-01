@@ -7,7 +7,6 @@
 
 #include <string>
 #include <vector>
-#include <fstream>
 #include <limits>
 #include "WordCase.h"
 
@@ -20,7 +19,7 @@ class GlobalEdit {
 private:
     static int edit_distance(const std::string &, const std::string &, bool);
 public:
-    static void get_options(WordCase &, const char*);
+    static void get_options(WordCase &, const std::vector<std::string> *);
 
 
 };

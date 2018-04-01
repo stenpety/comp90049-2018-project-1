@@ -65,13 +65,11 @@ int GlobalEdit::edit_distance(const std::string &cand_w, const std::string &dict
     return res;
 }
 
-void GlobalEdit::get_options(WordCase &word_case, const char *file_name) {
+void GlobalEdit::get_options(WordCase &word_case, const std::vector<std::string> *dict) {
     int max_dst = std::numeric_limits<int>::min();
     int temp_dst;
-    std::string w_dict;
-    std::ifstream dict (file_name);
 
-    while(getline(dict, w_dict)) {
+    for(std::string w_dict : *dict) {
         temp_dst = edit_distance(word_case.getMisspell_w(), w_dict, true);
         if (temp_dst > max_dst) {
             word_case.clear_options(gcnst::GED);
