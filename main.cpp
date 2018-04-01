@@ -18,8 +18,8 @@ int main(int argc, char **argv) {
 
     auto cases_db = new vector<WordCase>;
 
-    ifstream fmisspell (gcnst::GConst::ADDR_MSSPL.c_str());
-    ifstream fcorrect (gcnst::GConst::ADDR_CRCT.c_str());
+    ifstream fmisspell (gcnst::GConst::ADDR_MSSPL_SHRT.c_str());
+    ifstream fcorrect (gcnst::GConst::ADDR_CRCT_SHRT.c_str());
 
     WordCase temp = WordCase();
 
@@ -32,7 +32,28 @@ int main(int argc, char **argv) {
 
 
     // for test
-    cout << "n-th pair: " << (*cases_db)[100].toString() << endl;
+    /*
+    for (WordCase w_case : (*cases_db)) {
+        cout << "n-th pair: " << w_case.toString() << endl;
+        GlobalEdit::get_options(w_case,gcnst::GConst::ADDR_DICT.c_str());
+
+
+        for (string tmp : (*(*cases_db)[1].getGed_opts())) {
+            cout << tmp << endl;
+        }
+
+    }
+     */
+    /*
+    WordCase w_case = (*cases_db)[0];
+    cout << "n-th pair: " << w_case.toString() << endl;
+    GlobalEdit::get_options(w_case,gcnst::GConst::ADDR_DICT.c_str());
+
+
+    for (string tmp : (*(*cases_db)[1].getGed_opts())) {
+        cout << tmp << endl;
+    }
+     */
 
 
     delete(cases_db);

@@ -19,6 +19,9 @@ namespace gcnst {
         static const std::string ADDR_MSSPL;
         static const std::string ADDR_CRCT;
         static const std::string ADDR_DICT;
+
+        static const std::string ADDR_MSSPL_SHRT;
+        static const std::string ADDR_CRCT_SHRT;
     };
 }
 

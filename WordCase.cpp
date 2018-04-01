@@ -74,7 +74,7 @@ const std::string &WordCase::getCorrect_w() const {
     return correct_w;
 }
 
-const std::string &WordCase::getMisspell_w() const {
+const std::string & WordCase::getMisspell_w() const {
     return misspell_w;
 }
 
@@ -125,6 +125,18 @@ double WordCase::getSndx_precision() {
 
 const std::string WordCase::toString() {
     return "m: " + misspell_w + "; c: " + correct_w +";";
+}
+
+std::vector<std::string> *WordCase::getGed_opts() const {
+    return ged_opts;
+}
+
+std::vector<std::string> *WordCase::getNgram_opts() const {
+    return ngram_opts;
+}
+
+std::vector<std::string> *WordCase::getSndx_opts() const {
+    return sndx_opts;
 }
 
 

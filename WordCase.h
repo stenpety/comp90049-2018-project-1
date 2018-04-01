@@ -52,6 +52,12 @@ public:
 
     const std::string toString();
 
+    std::vector<std::string> *getGed_opts() const;
+
+    std::vector<std::string> *getNgram_opts() const;
+
+    std::vector<std::string> *getSndx_opts() const;
+
 };
 
 

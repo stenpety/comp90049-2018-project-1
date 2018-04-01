@@ -7,6 +7,9 @@
 
 #include <string>
 #include <vector>
+#include <fstream>
+#include <limits>
+#include "WordCase.h"
 
 #define MATCH_C 1
 #define INSERT_C (-1)
@@ -14,9 +17,10 @@
 #define REPLACE_C (-1)
 
 class GlobalEdit {
-
+private:
+    static int edit_distance(const std::string &, const std::string &, bool);
 public:
-    static int edit_distance(std::string, std::string, bool);
+    static void get_options(WordCase &, const char*);
 
 
 };
