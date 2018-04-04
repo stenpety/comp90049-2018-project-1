@@ -17,20 +17,23 @@ private:
     std::string correct_w;
 
     std::vector<std::string> *ged_opts;
-    double ged_precision;
+    bool ged_found;
 
     std::vector<std::string> *ngram_opts;
-    double ngram_precision;
+    bool ngram_found;
 
     std::vector<std::string> *sndx_opts;
-    double sndx_precision;
-
-    double update_precision(gcnst::Methods);
+    bool sndx_found;
 
 public:
     WordCase();
 
-    ~WordCase();
+    ~WordCase(); // 1. destructor
+
+    WordCase(const WordCase &); // 2. copy constr
+
+    WordCase & operator = (const WordCase &); // 3. asst oper
+
 
     void setCorrect_w(const std::string &correct_w);
 
@@ -43,12 +46,6 @@ public:
     const std::string &getCorrect_w() const;
 
     const std::string &getMisspell_w() const;
-
-    double getGed_precision();
-
-    double getNgram_precision();
-
-    double getSndx_precision();
 
     const std::string toString();
 

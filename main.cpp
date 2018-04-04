@@ -55,7 +55,7 @@ int main(int argc, char **argv) {
         NGram::get_options(w_case, dict);
 
 
-        foutput << "Ged opts:" <<endl;
+        foutput << "Ged opts:" << endl;
         for (const string &tmp : *(w_case.getGed_opts()) ) {
             foutput << tmp << " ";
         }
@@ -69,8 +69,6 @@ int main(int argc, char **argv) {
         foutput << endl;
 
 
-
-        foutput << "Prec. GED: "<< w_case.getGed_precision() << "; Prec. N-Gram: " << w_case.getNgram_precision() << endl;
     }
 
 
