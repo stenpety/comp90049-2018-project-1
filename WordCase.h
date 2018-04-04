@@ -17,13 +17,10 @@ private:
     std::string correct_w;
 
     std::vector<std::string> *ged_opts;
-    bool ged_found;
 
     std::vector<std::string> *ngram_opts;
-    bool ngram_found;
 
     std::vector<std::string> *sndx_opts;
-    bool sndx_found;
 
 public:
     WordCase();

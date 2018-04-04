@@ -6,13 +6,8 @@
 
 WordCase::WordCase() {
     ged_opts = new std::vector<std::string>;
-    ged_found = false;
-
     ngram_opts = new std::vector<std::string>;
-    ngram_found = false;
-
     sndx_opts = new std::vector<std::string>;
-    sndx_found = false;
 }
 
 WordCase::~WordCase() {
@@ -110,7 +105,7 @@ const std::string & WordCase::getMisspell_w() const {
 // found = std::find(ged_opts->begin(), ged_opts->end(), correct_w) != ged_opts->end();
 
 const std::string WordCase::toString() {
-    return "m: " + misspell_w + "; c: " + correct_w +";";
+    return misspell_w + "\t" + correct_w;
 }
 
 std::vector<std::string> *WordCase::getGed_opts() const {

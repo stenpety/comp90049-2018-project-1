@@ -15,6 +15,9 @@ int main(int argc, char **argv) {
 
 
     string ln_misspell, ln_correct, ln_dict;
+    int total_wrds = 0;
+    int ged_opts_cnt = 0, ged_success = 0;
+    int ngram_opts_cnt = 0, ngram_success = 0;
 
     auto cases_db = new vector<WordCase>;
     auto dict = new vector<string>;
@@ -48,28 +51,36 @@ int main(int argc, char **argv) {
     // Output text file
     ofstream foutput (argv[2]);
 
-
+    // output to file - tab separated
     for (WordCase w_case : (*cases_db)) {
-        foutput << "\nn-th pair: " << w_case.toString() << endl;
+        foutput << w_case.toString() << "\t";
+
         GlobalEdit::get_options(w_case, dict);
+        ged_opts_cnt += w_case.getGed_opts()->size();
+        ged_success += std::find(w_case.getGed_opts()->begin(), w_case.getGed_opts()->end(), w_case.getCorrect_w())
+                       != w_case.getGed_opts()->end() ? 1 : 0;
+
         NGram::get_options(w_case, dict);
+        ngram_opts_cnt += w_case.getNgram_opts()->size();
+        ngram_success += std::find(w_case.getNgram_opts()->begin(), w_case.getNgram_opts()->end(), w_case.getCorrect_w())
+                       != w_case.getNgram_opts()->end() ? 1 : 0;
 
-
-        foutput << "Ged opts:" << endl;
         for (const string &tmp : *(w_case.getGed_opts()) ) {
             foutput << tmp << " ";
         }
-        foutput << endl;
+        foutput << "\t" << w_case.getGed_opts()->size() << "\t";
 
-
-        foutput << "N-Gram opts:" <<endl;
         for (string tmp : *(w_case.getNgram_opts()) ) {
             foutput << tmp << " ";
         }
-        foutput << endl;
+        foutput << "\t" << w_case.getNgram_opts()->size() << endl;
 
-
+        ++total_wrds;
     }
+
+    foutput << "Total words: " << total_wrds << endl;
+    foutput << "GED opts: " << ged_opts_cnt << "\t GED success: " << ged_success << endl;
+    foutput << "N-Gram opts: " << ngram_opts_cnt << "\t N-Gram success: " << ngram_success << endl;
 
 
     /*
