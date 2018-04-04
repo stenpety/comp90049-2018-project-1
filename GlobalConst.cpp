@@ -19,6 +19,7 @@ namespace gcnst {
         getline(fconfig, addr_dict);
 
         std::cout << "Configuration done!" << std::endl;
+        fconfig.close();
     }
 }
 

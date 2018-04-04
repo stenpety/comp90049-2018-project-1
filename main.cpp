@@ -19,7 +19,7 @@ int main(int argc, char **argv) {
     auto cases_db = new vector<WordCase>;
     auto dict = new vector<string>;
 
-    if (argc < 2) {
+    if (argc < 3) {
         perror("Error! Not enough parameters. Exiting...");
         exit(EXIT_FAILURE);
     }
@@ -45,34 +45,32 @@ int main(int argc, char **argv) {
 
     //NGram::setN(3);
 
-
-
-    // for test
-    //cout << "Test NEW GED: " << GlobalEdit::edit_distance_fast("lended","deaden",true) << endl;
+    // Output text file
+    ofstream foutput (argv[2]);
 
 
     for (WordCase w_case : (*cases_db)) {
-        cout << "\nn-th pair: " << w_case.toString() << endl;
+        foutput << "\nn-th pair: " << w_case.toString() << endl;
         GlobalEdit::get_options(w_case, dict);
-        //NGram::get_options(w_case, dict);
+        NGram::get_options(w_case, dict);
 
 
-        cout << "Ged opts:" <<endl;
+        foutput << "Ged opts:" <<endl;
         for (const string &tmp : *(w_case.getGed_opts()) ) {
-            cout << tmp << " ";
+            foutput << tmp << " ";
         }
-        cout << endl;
+        foutput << endl;
 
-        /*
-        cout << "N-Gram opts:" <<endl;
+
+        foutput << "N-Gram opts:" <<endl;
         for (string tmp : *(w_case.getNgram_opts()) ) {
-            cout << tmp << " ";
+            foutput << tmp << " ";
         }
-        cout << endl;
-         */
+        foutput << endl;
 
 
-        cout << "Prec. GED: "<< w_case.getGed_precision() << "; Prec. N-Gram: " << w_case.getNgram_precision() << endl;
+
+        foutput << "Prec. GED: "<< w_case.getGed_precision() << "; Prec. N-Gram: " << w_case.getNgram_precision() << endl;
     }
 
 
@@ -88,6 +86,13 @@ int main(int argc, char **argv) {
      */
 
 
+    // Close files
+    fmisspell.close();
+    fcorrect.close();
+    fdict.close();
+    foutput.close();
+
+    // Free memory
     delete(cases_db);
     delete(dict);
 
