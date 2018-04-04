@@ -12,6 +12,8 @@
 
 //#define N 3
 
+class WordCase;
+
 class NGram {
 private:
     static int N;

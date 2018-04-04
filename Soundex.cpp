@@ -4,7 +4,7 @@
 
 #include "Soundex.h"
 
-std::string *Soundex::sndx_convert(std::string cnd) {
+std::string *Soundex::sndx_convert(const std::string &cnd) {
     auto res = new std::string;
     int i;
 
@@ -62,4 +62,19 @@ std::string *Soundex::sndx_convert(std::string cnd) {
     }
 
     return res;
+}
+
+void Soundex::get_options_exact(WordCase &word_case, const std::vector<std::string> *dict) {
+    std::string *sndx_msspl = sndx_convert(word_case.getMisspell_w());
+
+    for(const std::string &w_dict : *dict) {
+        std::string *sndx_w_dict = sndx_convert(w_dict);
+        if (*sndx_msspl == *sndx_w_dict) {
+            word_case.add_option(w_dict, gcnst::SNDX);
+        }
+
+        delete(sndx_w_dict);
+    }
+
+    delete(sndx_msspl);
 }

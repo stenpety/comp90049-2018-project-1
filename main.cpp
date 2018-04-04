@@ -18,6 +18,7 @@ int main(int argc, char **argv) {
     int total_wrds = 0;
     int ged_opts_cnt = 0, ged_success = 0;
     int ngram_opts_cnt = 0, ngram_success = 0;
+    int sndx_opts_cnt = 0, sndx_success = 0;
 
     auto cases_db = new vector<WordCase>;
     auto dict = new vector<string>;
@@ -65,6 +66,12 @@ int main(int argc, char **argv) {
         ngram_success += std::find(w_case.getNgram_opts()->begin(), w_case.getNgram_opts()->end(), w_case.getCorrect_w())
                        != w_case.getNgram_opts()->end() ? 1 : 0;
 
+        Soundex::get_options_exact(w_case, dict);
+        sndx_opts_cnt += w_case.getSndx_opts()->size();
+        sndx_success += std::find(w_case.getSndx_opts()->begin(), w_case.getSndx_opts()->end(), w_case.getCorrect_w())
+                         != w_case.getSndx_opts()->end() ? 1 : 0;
+
+
         for (const string &tmp : *(w_case.getGed_opts()) ) {
             foutput << tmp << " ";
         }
@@ -73,7 +80,12 @@ int main(int argc, char **argv) {
         for (string tmp : *(w_case.getNgram_opts()) ) {
             foutput << tmp << " ";
         }
-        foutput << "\t" << w_case.getNgram_opts()->size() << endl;
+        foutput << "\t" << w_case.getNgram_opts()->size() << "\t";
+
+        for (string tmp : *(w_case.getSndx_opts()) ) {
+            foutput << tmp << " ";
+        }
+        foutput << "\t" << w_case.getSndx_opts()->size() << endl;
 
         ++total_wrds;
     }
@@ -81,7 +93,7 @@ int main(int argc, char **argv) {
     foutput << "Total words: " << total_wrds << endl;
     foutput << "GED opts: " << ged_opts_cnt << "\t GED success: " << ged_success << endl;
     foutput << "N-Gram opts: " << ngram_opts_cnt << "\t N-Gram success: " << ngram_success << endl;
-
+    foutput << "Soundex opts: " << sndx_opts_cnt << "\t Soundex success: " << sndx_success << endl;
 
     /*
     WordCase w_case = (*cases_db)[0];

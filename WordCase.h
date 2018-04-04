@@ -8,8 +8,10 @@
 #include <string>
 #include <vector>
 #include <iostream>
-#include "GlobalConst.h"
 
+#include "GlobalConst.h"
+#include "NGram.h"
+#include "Soundex.h"
 
 class WordCase {
 private:
@@ -21,6 +23,7 @@ private:
     std::vector<std::string> *ngram_opts;
 
     std::vector<std::string> *sndx_opts;
+    //std::string sndx_str;
 
 public:
     WordCase();

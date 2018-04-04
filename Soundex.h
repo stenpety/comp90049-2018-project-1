@@ -6,13 +6,17 @@
 #define COMP90049_2018_PROJECT_1_SOUNDEX_H
 
 #include <string>
+#include "WordCase.h"
+
+class WordCase;
 
 class Soundex {
 private:
     static const int TRUNC_TO = 4;
 
 public:
-    std::string *sndx_convert(std::string);
+    static std::string *sndx_convert(const std::string &);
+    static void get_options_exact(WordCase &, const std::vector<std::string> *);
 };
 
 
