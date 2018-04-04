@@ -46,7 +46,7 @@ int main(int argc, char **argv) {
         dict->push_back(ln_dict);
     }
 
-    //NGram::setN(3);
+    NGram::setN(3);
 
     // Output text file
     ofstream foutput (argv[2]);

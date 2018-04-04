@@ -4,6 +4,10 @@
 
 #include "NGram.h"
 
+int NGram::N;
+
+NGram::NGram() {}
+
 int NGram::n_gram_distance(std::string cnd, std::string dct) {
 
     int res = 0, cmn = 0;
@@ -59,10 +63,6 @@ void NGram::get_options(WordCase &word_case, const std::vector<std::string> *dic
     }
 }
 
-/*
 void NGram::setN(int n) {
-    NGram::n = n;
+    NGram::N = n;
 }
- */
-
-NGram::NGram() {}

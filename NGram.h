@@ -10,11 +10,11 @@
 #include <limits>
 #include "WordCase.h"
 
-#define N 3
+//#define N 3
 
 class NGram {
 private:
-    //static int N;
+    static int N;
     static int n_gram_distance(std::string, std::string);
 public:
     NGram();
