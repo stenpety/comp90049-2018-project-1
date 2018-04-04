@@ -8,15 +8,15 @@ int NGram::N;
 
 NGram::NGram() {}
 
-int NGram::n_gram_distance(std::string cnd, std::string dct) {
+int NGram::n_gram_distance(const std::string &cand_w, const std::string &dict_w) {
 
     int res = 0, cmn = 0;
     unsigned long i;
     auto *cnd_sbst = new std::vector<std::string>;
     auto *dct_sbst = new std::vector<std::string>;
 
-    cnd = " " + cnd + " ";
-    dct = " " + dct + " ";
+    std::string cnd = " " + cand_w + " ";
+    std::string dct = " " + dict_w + " ";
 
 
     for (i = 0; i < cnd.length()- N + 1; ++i) {

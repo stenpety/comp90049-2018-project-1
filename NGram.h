@@ -15,7 +15,7 @@
 class NGram {
 private:
     static int N;
-    static int n_gram_distance(std::string, std::string);
+    static int n_gram_distance(const std::string &, const std::string &);
 public:
     NGram();
 
