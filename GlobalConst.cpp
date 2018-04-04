@@ -5,13 +5,21 @@
 #include "GlobalConst.h"
 namespace gcnst {
 
-    const std::string GConst::ADDR_MSSPL = "/Users/stenpety/test/knowtech/misspell.txt";
-    const std::string GConst::ADDR_CRCT = "/Users/stenpety/test/knowtech/correct.txt";
-    const std::string GConst::ADDR_DICT = "/Users/stenpety/test/knowtech/dictionary.txt";
-
-    const std::string GConst::ADDR_MSSPL_SHRT = "/Users/stenpety/test/knowtech/misspell_short.txt";
-    const std::string GConst::ADDR_CRCT_SHRT = "/Users/stenpety/test/knowtech/correct_short.txt";
+    std::string GConst::addr_msspl;
+    std::string GConst::addr_crct;
+    std::string GConst::addr_dict;
 
     GConst::GConst() = default;
+
+    void GConst::config(const char *addr_conf) {
+        std::ifstream fconfig (addr_conf);
+
+        getline(fconfig, addr_msspl);
+        getline(fconfig, addr_crct);
+        getline(fconfig, addr_dict);
+
+        std::cout << "Configuration done!" << std::endl;
+    }
 }
 
+//

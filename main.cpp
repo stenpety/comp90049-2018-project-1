@@ -19,8 +19,15 @@ int main(int argc, char **argv) {
     auto cases_db = new vector<WordCase>;
     auto dict = new vector<string>;
 
-    ifstream fmisspell (gcnst::GConst::ADDR_MSSPL_SHRT.c_str());
-    ifstream fcorrect (gcnst::GConst::ADDR_CRCT_SHRT.c_str());
+    if (argc < 2) {
+        perror("Error! Not enough parameters. Exiting...");
+        exit(EXIT_FAILURE);
+    }
+
+    gcnst::GConst::config(argv[1]);
+
+    ifstream fmisspell (gcnst::GConst::addr_msspl.c_str());
+    ifstream fcorrect (gcnst::GConst::addr_crct.c_str());
 
     WordCase temp = WordCase();
 
@@ -31,7 +38,7 @@ int main(int argc, char **argv) {
         cases_db->push_back(temp);
     }
 
-    ifstream fdict (gcnst::GConst::ADDR_DICT.c_str());
+    ifstream fdict (gcnst::GConst::addr_dict.c_str());
     while (getline(fdict, ln_dict)) {
         dict->push_back(ln_dict);
     }
@@ -51,7 +58,7 @@ int main(int argc, char **argv) {
 
 
         cout << "Ged opts:" <<endl;
-        for (string tmp : *(w_case.getGed_opts()) ) {
+        for (const string &tmp : *(w_case.getGed_opts()) ) {
             cout << tmp << " ";
         }
         cout << endl;

@@ -6,22 +6,23 @@
 #define COMP90049_2018_PROJECT_1_GLOBALCONST_H
 
 #include <string>
+#include <fstream>
+#include <iostream>
 
 namespace gcnst {
     enum Methods {GED, LED, NGRAM, SNDX};
 
 
     class GConst {
+
     public:
+        static std::string addr_msspl;
+        static std::string addr_crct;
+        static std::string addr_dict;
+
         GConst();
 
-    public:
-        static const std::string ADDR_MSSPL;
-        static const std::string ADDR_CRCT;
-        static const std::string ADDR_DICT;
-
-        static const std::string ADDR_MSSPL_SHRT;
-        static const std::string ADDR_CRCT_SHRT;
+        static void config(const char *);
     };
 }
 
