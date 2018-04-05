@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 
+#include <time.h>
+
 #include "GlobalConst.h"
 #include "GlobalEdit.h"
 #include "NGram.h"
@@ -19,6 +21,8 @@ int main(int argc, char **argv) {
     int ged_opts_cnt = 0, ged_success = 0;
     int ngram_opts_cnt = 0, ngram_success = 0;
     int sndx_opts_cnt = 0, sndx_success = 0;
+
+    time_t timer_start = clock();
 
     auto cases_db = new vector<WordCase>;
     auto dict = new vector<string>;
@@ -48,7 +52,7 @@ int main(int argc, char **argv) {
     }
 
     NGram::setN(3);
-    Soundex::setTRUNC_TO(6);
+    Soundex::setTRUNC_TO(7);
 
     // Output text file
     ofstream foutput (argv[2]);
@@ -117,6 +121,8 @@ int main(int argc, char **argv) {
     // Free memory
     delete(cases_db);
     delete(dict);
+
+    cout << "Execution time: " << (double)(clock() - timer_start)/CLOCKS_PER_SEC << " s." << endl;
 
     return 0;
 }
