@@ -13,59 +13,35 @@
 
 using namespace std;
 
-class SpellingCorr {
-    std::mutex mutex;
-public:
-    int total_wrds = 0;
-    int ged_opts_cnt = 0, ged_success = 0;
-    int ngram_opts_cnt = 0, ngram_success = 0;
-    int sndx_opts_cnt = 0, sndx_success = 0;
 
-    void compute(vector<WordCase> *cases_db, int *n, vector<string> *dict, vector<vector<string>*> *dict_ngr_sort) {
-        int i;
+void compute(vector<WordCase> *cases_db, int *n, vector<string> *dict, vector<vector<string>*> *dict_ngr_sort) {
+    int i;
+    mutex mutex;
 
-        mutex.lock();
-        *n += CHUNK;
-        mutex.unlock();
+    mutex.lock();
+    *n += CHUNK;
+    mutex.unlock();
 
-        for (i = *n-CHUNK; i < *n; ++i) {
-            WordCase w_case = (*cases_db)[i];
+    for (i = *n-CHUNK; i < *n; ++i) {
+        WordCase w_case = (*cases_db)[i];
 
-            GlobalEdit::get_options(w_case, dict);
-            NGram::get_options(w_case, dict_ngr_sort, dict);
-            Soundex::get_options_exact(w_case, dict);
-
-            mutex.lock();
-            ged_opts_cnt += w_case.getGed_opts()->size();
-            ged_success += std::find(w_case.getGed_opts()->begin(), w_case.getGed_opts()->end(), w_case.getCorrect_w())
-                           != w_case.getGed_opts()->end() ? 1 : 0;
-
-            ngram_opts_cnt += w_case.getNgram_opts()->size();
-            ngram_success += std::find(w_case.getNgram_opts()->begin(), w_case.getNgram_opts()->end(), w_case.getCorrect_w())
-                             != w_case.getNgram_opts()->end() ? 1 : 0;
-
-            sndx_opts_cnt += w_case.getSndx_opts()->size();
-            sndx_success += std::find(w_case.getSndx_opts()->begin(), w_case.getSndx_opts()->end(), w_case.getCorrect_w())
-                            != w_case.getSndx_opts()->end() ? 1 : 0;
-
-            ++total_wrds;
-            mutex.unlock();
-        }
+        GlobalEdit::get_options(w_case, dict);
+        NGram::get_options(w_case, dict_ngr_sort, dict);
+        Soundex::get_options_exact(w_case, dict);
     }
-};
+}
 
-SpellingCorr *calc_multithread(vector<WordCase> *cases_db, int *n, vector<string> *dict, vector<vector<string>*> *dict_ngr_sort) {
-    auto spelling_corr = new SpellingCorr();
+void calc_multithread(vector<WordCase> *cases_db, int *n, vector<string> *dict, vector<vector<string>*> *dict_ngr_sort) {
     vector<thread> threads;
     int i;
-    for (i = 0; i < 8; ++i) {
-        threads.push_back(thread(&SpellingCorr::compute, &spelling_corr, cases_db, n, dict, dict_ngr_sort));
+    for (i = 0; i < 4; ++i) {
+        threads.push_back(thread(compute, cases_db, n, dict, dict_ngr_sort));
+        cout << "Thread pushed, n = " << *n << endl;
     }
 
     for(int i = 0; i < threads.size() ; i++) {
         threads.at(i).join();
     }
-    return spelling_corr;
 }
 
 int main(int argc, char **argv) {
@@ -115,16 +91,23 @@ int main(int argc, char **argv) {
     ofstream foutput (argv[2]);
 
     // Here magic comes
+    calc_multithread(cases_db, &n, dict, dict_ngr_sort);
 
-    SpellingCorr *spelling_corr = calc_multithread(cases_db, &n, dict, dict_ngr_sort);
-    total_wrds = spelling_corr->total_wrds;
-    ged_opts_cnt = spelling_corr->ged_opts_cnt;
-    ged_success = spelling_corr->ged_success;
-    ngram_opts_cnt = spelling_corr->ngram_opts_cnt;
-    ngram_success = spelling_corr->ngram_success;
-    sndx_opts_cnt = spelling_corr->sndx_opts_cnt;
-    sndx_success = spelling_corr->sndx_success;
+    for (const WordCase &w_case : *cases_db) {
+        ged_opts_cnt += w_case.getGed_opts()->size();
+        ged_success += std::find(w_case.getGed_opts()->begin(), w_case.getGed_opts()->end(), w_case.getCorrect_w())
+                       != w_case.getGed_opts()->end() ? 1 : 0;
 
+        ngram_opts_cnt += w_case.getNgram_opts()->size();
+        ngram_success += std::find(w_case.getNgram_opts()->begin(), w_case.getNgram_opts()->end(), w_case.getCorrect_w())
+                         != w_case.getNgram_opts()->end() ? 1 : 0;
+
+        sndx_opts_cnt += w_case.getSndx_opts()->size();
+        sndx_success += std::find(w_case.getSndx_opts()->begin(), w_case.getSndx_opts()->end(), w_case.getCorrect_w())
+                        != w_case.getSndx_opts()->end() ? 1 : 0;
+
+        ++total_wrds;
+    }
 
     // Form import
     foutput << "RUN SUMMARY: " << endl;
@@ -168,7 +151,6 @@ int main(int argc, char **argv) {
     delete(cases_db);
     delete(dict);
     delete(dict_ngr_sort);
-    delete(spelling_corr);
 
     cout << "Execution time: " << (double)(clock() - timer_start)/CLOCKS_PER_SEC << " s." << endl;
 
