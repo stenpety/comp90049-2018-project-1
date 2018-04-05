@@ -99,21 +99,36 @@ int main(int argc, char **argv) {
         cout << "Words processed: " << total_wrds << endl;
     }
 
-    foutput << "Total words: " << total_wrds << endl;
-    foutput << "GED opts: " << ged_opts_cnt <<
-            "\tGED success: " << ged_success <<
-            "\tGED precision: " << (double)ged_success/ged_opts_cnt <<
-            "\tGED recall: " << (double)ged_success/total_wrds << endl;
+    foutput << "RUN SUMMARY: " << endl;
+    foutput << "Total words: " << total_wrds << "\n\n" << endl;
 
-    foutput << "N-Gram opts: " << ngram_opts_cnt <<
-            "\t N-Gram success: " << ngram_success <<
-            "\tN-Gram precision: " << (double)ngram_success/ngram_opts_cnt <<
-            "\tN-Gram recall: " << (double)ngram_success/total_wrds << endl;
+    foutput << "*** GLOBAL EDIT DISTANCE ***" << endl;
+    foutput << "Predictions: " << ged_opts_cnt <<
+            "\nSuccess: " << ged_success <<
+            "\nPrecision: " << (double)ged_success/ged_opts_cnt <<
+            "\nRecall: " << (double)ged_success/total_wrds << endl;
+    foutput << "GED parameters:" << endl;
+    foutput << "Mat: " << GlobalEdit::getMATCH_C() <<
+            " Ins: " << GlobalEdit::getINSERT_C() <<
+            " Del: " << GlobalEdit::getDELETE_C() <<
+            " Repl: " << GlobalEdit::getREPLACE_C() << endl;
+    foutput << "Limit dist: " << GlobalEdit :: getDist_limit() << endl;
 
-    foutput << "Soundex opts: " << sndx_opts_cnt <<
-            "\t Soundex success: " << sndx_success <<
-            "\tSoundex precision: " << (double)sndx_success/sndx_opts_cnt <<
-            "\tSoundex recall: " << (double)sndx_success/total_wrds << endl;
+    foutput << "\n*** N-GRAM ***" << endl;
+    foutput << "Predictions: " << ngram_opts_cnt <<
+            "\nSuccess: " << ngram_success <<
+            "\nPrecision: " << (double)ngram_success/ngram_opts_cnt <<
+            "\nRecall: " << (double)ngram_success/total_wrds << endl;
+    foutput << "N-Gram parameters:" << endl;
+    foutput << "N: " << NGram::getN() << endl;
+
+    foutput << "\n*** SOUNDEX ***" << endl;
+    foutput << "Predictions: " << sndx_opts_cnt <<
+            "\nSuccess: " << sndx_success <<
+            "\nPrecision: " << (double)sndx_success/sndx_opts_cnt <<
+            "\nRecall: " << (double)sndx_success/total_wrds << endl;
+    foutput << "Soundex parameters:" << endl;
+    foutput << "Truncate to: " << Soundex::getTRUNC_TO() << endl;
 
     /*
     WordCase w_case = (*cases_db)[0];
