@@ -3,18 +3,75 @@
 #include <string>
 #include <vector>
 #include <ctime>
+#include <thread>
+#include <mutex>
 
 #include "GlobalConst.h"
 #include "WordCase.h"
 
+#define CHUNK 5
+
 using namespace std;
 
+class SpellingCorr {
+    std::mutex mutex;
+public:
+    int total_wrds = 0;
+    int ged_opts_cnt = 0, ged_success = 0;
+    int ngram_opts_cnt = 0, ngram_success = 0;
+    int sndx_opts_cnt = 0, sndx_success = 0;
 
+    void compute(vector<WordCase> *cases_db, int *n, vector<string> *dict, vector<vector<string>*> *dict_ngr_sort) {
+        int i;
+
+        mutex.lock();
+        *n += CHUNK;
+        mutex.unlock();
+
+        for (i = *n-CHUNK; i < *n; ++i) {
+            WordCase w_case = (*cases_db)[i];
+
+            GlobalEdit::get_options(w_case, dict);
+            NGram::get_options(w_case, dict_ngr_sort, dict);
+            Soundex::get_options_exact(w_case, dict);
+
+            mutex.lock();
+            ged_opts_cnt += w_case.getGed_opts()->size();
+            ged_success += std::find(w_case.getGed_opts()->begin(), w_case.getGed_opts()->end(), w_case.getCorrect_w())
+                           != w_case.getGed_opts()->end() ? 1 : 0;
+
+            ngram_opts_cnt += w_case.getNgram_opts()->size();
+            ngram_success += std::find(w_case.getNgram_opts()->begin(), w_case.getNgram_opts()->end(), w_case.getCorrect_w())
+                             != w_case.getNgram_opts()->end() ? 1 : 0;
+
+            sndx_opts_cnt += w_case.getSndx_opts()->size();
+            sndx_success += std::find(w_case.getSndx_opts()->begin(), w_case.getSndx_opts()->end(), w_case.getCorrect_w())
+                            != w_case.getSndx_opts()->end() ? 1 : 0;
+
+            ++total_wrds;
+            mutex.unlock();
+        }
+    }
+};
+
+SpellingCorr *calc_multithread(vector<WordCase> *cases_db, int *n, vector<string> *dict, vector<vector<string>*> *dict_ngr_sort) {
+    auto spelling_corr = new SpellingCorr();
+    vector<thread> threads;
+    int i;
+    for (i = 0; i < 8; ++i) {
+        threads.push_back(thread(&SpellingCorr::compute, &spelling_corr, cases_db, n, dict, dict_ngr_sort));
+    }
+
+    for(int i = 0; i < threads.size() ; i++) {
+        threads.at(i).join();
+    }
+    return spelling_corr;
+}
 
 int main(int argc, char **argv) {
 
-
     string ln_misspell, ln_correct, ln_dict;
+    int n = 0;
     int total_wrds = 0;
     int ged_opts_cnt = 0, ged_success = 0;
     int ngram_opts_cnt = 0, ngram_success = 0;
@@ -31,13 +88,15 @@ int main(int argc, char **argv) {
         exit(EXIT_FAILURE);
     }
 
+    // Get config file
     gcnst::GConst::config(argv[1]);
 
+    // Open files with misspelled and correct words
     ifstream fmisspell (gcnst::GConst::addr_msspl.c_str());
     ifstream fcorrect (gcnst::GConst::addr_crct.c_str());
 
+    // Populate db of WordCase's
     WordCase temp = WordCase();
-
     while (getline(fmisspell, ln_misspell)) {
         getline(fcorrect, ln_correct);
         temp.setMisspell_w(ln_misspell);
@@ -45,6 +104,7 @@ int main(int argc, char **argv) {
         cases_db->push_back(temp);
     }
 
+    // Populate dictionary
     ifstream fdict (gcnst::GConst::addr_dict.c_str());
     while (getline(fdict, ln_dict)) {
         dict->push_back(ln_dict);
@@ -54,53 +114,19 @@ int main(int argc, char **argv) {
     // Output text file
     ofstream foutput (argv[2]);
 
-    // Table heading
-    foutput << "Misspelled" << "\t" << "Correct" << "\t" << "GED" << "\t" << "N-Gr" << "\t" << "Sndx" << endl;
+    // Here magic comes
 
-    // output to file - tab separated
-    for (WordCase w_case : (*cases_db)) {
-        foutput << w_case.toString() << "\t";
+    SpellingCorr *spelling_corr = calc_multithread(cases_db, &n, dict, dict_ngr_sort);
+    total_wrds = spelling_corr->total_wrds;
+    ged_opts_cnt = spelling_corr->ged_opts_cnt;
+    ged_success = spelling_corr->ged_success;
+    ngram_opts_cnt = spelling_corr->ngram_opts_cnt;
+    ngram_success = spelling_corr->ngram_success;
+    sndx_opts_cnt = spelling_corr->sndx_opts_cnt;
+    sndx_success = spelling_corr->sndx_success;
 
-        //GlobalEdit::get_options(w_case, dict);
-        ged_opts_cnt += w_case.getGed_opts()->size();
-        ged_success += std::find(w_case.getGed_opts()->begin(), w_case.getGed_opts()->end(), w_case.getCorrect_w())
-                       != w_case.getGed_opts()->end() ? 1 : 0;
 
-        NGram::get_options(w_case, dict_ngr_sort, dict);
-        ngram_opts_cnt += w_case.getNgram_opts()->size();
-        ngram_success += std::find(w_case.getNgram_opts()->begin(), w_case.getNgram_opts()->end(), w_case.getCorrect_w())
-                       != w_case.getNgram_opts()->end() ? 1 : 0;
-
-        //Soundex::get_options_exact(w_case, dict);
-        sndx_opts_cnt += w_case.getSndx_opts()->size();
-        sndx_success += std::find(w_case.getSndx_opts()->begin(), w_case.getSndx_opts()->end(), w_case.getCorrect_w())
-                         != w_case.getSndx_opts()->end() ? 1 : 0;
-
-        /*
-        // Full report - uncomment
-        for (const string &tmp : *(w_case.getGed_opts()) ) {
-            foutput << tmp << " ";
-        }
-        foutput << "\t" << w_case.getGed_opts()->size() << "\t";
-
-        for (string tmp : *(w_case.getNgram_opts()) ) {
-            foutput << tmp << " ";
-        }
-        foutput << "\t" << w_case.getNgram_opts()->size() << "\t";
-
-        for (string tmp : *(w_case.getSndx_opts()) ) {
-            foutput << tmp << " ";
-        }
-        foutput << "\t" << w_case.getSndx_opts()->size() << endl;
-         */
-        foutput << "\t" << w_case.getGed_opts()->size() << "\t";
-        foutput << "\t" << w_case.getNgram_opts()->size() << "\t";
-        foutput << "\t" << w_case.getSndx_opts()->size() << endl;
-
-        ++total_wrds;
-        cout << "Words processed: " << total_wrds << endl;
-    }
-
+    // Form import
     foutput << "RUN SUMMARY: " << endl;
     foutput << "Total words: " << total_wrds << "\n\n" << endl;
 
@@ -132,26 +158,6 @@ int main(int argc, char **argv) {
     foutput << "Soundex parameters:" << endl;
     foutput << "Truncate to: " << Soundex::getTRUNC_TO() << endl;
 
-    /*
-    WordCase w_case = (*cases_db)[0];
-    cout << "n-th pair: " << w_case.toString() << endl;
-    GlobalEdit::get_options(w_case,gcnst::GConst::ADDR_DICT.c_str());
-
-
-    for (string tmp : (*(*cases_db)[1].getGed_opts())) {
-        cout << tmp << endl;
-    }
-     */
-
-    /*
-    WordCase w_test = WordCase();
-    w_test.setMisspell_w("lended");
-    string str = "deaden";
-    cout << NGram::n_gram_distance_fast(NGram::split_word(w_test.getMisspell_w()), NGram::split_word(str) )  << endl;
-     */
-
-
-
     // Close files
     fmisspell.close();
     fcorrect.close();
@@ -162,6 +168,7 @@ int main(int argc, char **argv) {
     delete(cases_db);
     delete(dict);
     delete(dict_ngr_sort);
+    delete(spelling_corr);
 
     cout << "Execution time: " << (double)(clock() - timer_start)/CLOCKS_PER_SEC << " s." << endl;
 
