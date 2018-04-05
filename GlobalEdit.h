@@ -11,6 +11,8 @@
 
 #include "WordCase.h"
 
+#define NOLIM_CODE -9999
+
 class WordCase;
 
 class GlobalEdit {
@@ -28,6 +30,16 @@ public:
     static void set_edit_parms(int, int, int, int, int);
     static void get_options(WordCase &, const std::vector<std::string> *);
     static int edit_distance_fast(const std::string &, const std::string &, bool);
+
+    static int getMATCH_C();
+
+    static int getINSERT_C();
+
+    static int getDELETE_C();
+
+    static int getREPLACE_C();
+
+    static int getDist_limit();
 };
 
 

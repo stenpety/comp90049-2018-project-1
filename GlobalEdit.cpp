@@ -118,7 +118,7 @@ int GlobalEdit::edit_distance_fast(const std::string &cand_w, const std::string 
 }
 
 void GlobalEdit::get_options(WordCase &word_case, const std::vector<std::string> *dict) {
-    int max_dst = std::numeric_limits<int>::min();
+    int max_dst = dist_limit == NOLIM_CODE ? std::numeric_limits<int>::min() : dist_limit;
     int temp_dst;
 
     for(std::string w_dict : *dict) {
@@ -132,6 +132,26 @@ void GlobalEdit::get_options(WordCase &word_case, const std::vector<std::string>
         }
     }
 
+}
+
+int GlobalEdit::getMATCH_C() {
+    return MATCH_C;
+}
+
+int GlobalEdit::getINSERT_C() {
+    return INSERT_C;
+}
+
+int GlobalEdit::getDELETE_C() {
+    return DELETE_C;
+}
+
+int GlobalEdit::getREPLACE_C() {
+    return REPLACE_C;
+}
+
+int GlobalEdit::getDist_limit() {
+    return dist_limit;
 }
 
 

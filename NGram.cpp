@@ -66,3 +66,7 @@ void NGram::get_options(WordCase &word_case, const std::vector<std::string> *dic
 void NGram::setN(int n) {
     NGram::N = n;
 }
+
+int NGram::getN() {
+    return N;
+}

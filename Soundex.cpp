@@ -84,3 +84,7 @@ void Soundex::get_options_exact(WordCase &word_case, const std::vector<std::stri
 void Soundex::setTRUNC_TO(int TRUNC_TO) {
     Soundex::TRUNC_TO = TRUNC_TO;
 }
+
+int Soundex::getTRUNC_TO() {
+    return TRUNC_TO;
+}

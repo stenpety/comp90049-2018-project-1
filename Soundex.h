@@ -19,6 +19,8 @@ public:
     static void get_options_exact(WordCase &, const std::vector<std::string> *);
 
     static void setTRUNC_TO(int TRUNC_TO);
+
+    static int getTRUNC_TO();
 };
 
 

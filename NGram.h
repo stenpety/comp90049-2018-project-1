@@ -23,6 +23,8 @@ public:
     static void get_options(WordCase &, const std::vector<std::string> *);
 
     static void setN(int n);
+
+    static int getN();
 };
 
 
