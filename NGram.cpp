@@ -47,6 +47,7 @@ int NGram::n_gram_distance(const std::string &cand_w, const std::string &dict_w)
     return res;
 }
 
+/*
 void NGram::get_options(WordCase &word_case, const std::vector<std::string> *dict) {
     int max_dst = std::numeric_limits<int>::max();
     int temp_dst;
@@ -66,10 +67,34 @@ void NGram::get_options(WordCase &word_case, const std::vector<std::string> *dic
         } else if (temp_dst == max_dst) {
             word_case.add_option(w_dict, gcnst::NGRAM);
         }
-
         delete(word_dict_s);
     }
+    delete(word_msspl_s);
+}
+ */
+void NGram::get_options(WordCase &word_case, const std::vector<std::vector<std::string>*> *dict_ngr_sort,
+                        const std::vector<std::string> *dict) {
+    int max_dst = std::numeric_limits<int>::max();
+    int temp_dst, i;
+    std::vector<std::string> *word_msspl_s = split_word(word_case.getMisspell_w());
 
+    for(i = 0; i < dict->size(); ++i) {
+
+        std::vector<std::string> *dict_ws = (*dict_ngr_sort)[i];
+        // Legacy code
+        //temp_dst = n_gram_distance(word_case.getMisspell_w(), w_dict);
+
+        temp_dst = n_gram_distance_fast(word_msspl_s, dict_ws);
+
+        if (temp_dst < max_dst) {
+            word_case.clear_options(gcnst::NGRAM);
+            word_case.add_option((*dict)[i], gcnst::NGRAM);
+            max_dst = temp_dst;
+        } else if (temp_dst == max_dst) {
+            word_case.add_option((*dict)[i], gcnst::NGRAM);
+        }
+
+    }
     delete(word_msspl_s);
 }
 

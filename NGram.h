@@ -22,7 +22,9 @@ private:
 public:
     NGram();
 
-    static void get_options(WordCase &, const std::vector<std::string> *);
+    //static void get_options(WordCase &, const std::vector<std::string> *);
+    static void get_options(WordCase &, const std::vector<std::vector<std::string>*> *,
+            const std::vector<std::string> *);
 
     static void setN(int n);
 

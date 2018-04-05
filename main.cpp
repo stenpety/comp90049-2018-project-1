@@ -24,6 +24,7 @@ int main(int argc, char **argv) {
 
     auto cases_db = new vector<WordCase>;
     auto dict = new vector<string>;
+    auto dict_ngr_sort = new vector<vector<string>*>;
 
     if (argc < 3) {
         perror("Error! Not enough parameters. Exiting...");
@@ -47,6 +48,7 @@ int main(int argc, char **argv) {
     ifstream fdict (gcnst::GConst::addr_dict.c_str());
     while (getline(fdict, ln_dict)) {
         dict->push_back(ln_dict);
+        dict_ngr_sort->push_back(NGram::split_word(ln_dict));
     }
 
     // Output text file
@@ -64,7 +66,7 @@ int main(int argc, char **argv) {
         ged_success += std::find(w_case.getGed_opts()->begin(), w_case.getGed_opts()->end(), w_case.getCorrect_w())
                        != w_case.getGed_opts()->end() ? 1 : 0;
 
-        NGram::get_options(w_case, dict);
+        NGram::get_options(w_case, dict_ngr_sort, dict);
         ngram_opts_cnt += w_case.getNgram_opts()->size();
         ngram_success += std::find(w_case.getNgram_opts()->begin(), w_case.getNgram_opts()->end(), w_case.getCorrect_w())
                        != w_case.getNgram_opts()->end() ? 1 : 0;
@@ -159,6 +161,7 @@ int main(int argc, char **argv) {
     // Free memory
     delete(cases_db);
     delete(dict);
+    delete(dict_ngr_sort);
 
     cout << "Execution time: " << (double)(clock() - timer_start)/CLOCKS_PER_SEC << " s." << endl;
 
