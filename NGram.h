@@ -17,6 +17,8 @@ class NGram {
 private:
     static int N;
     static int n_gram_distance(const std::string &, const std::string &);
+
+
 public:
     NGram();
 
@@ -25,6 +27,9 @@ public:
     static void setN(int n);
 
     static int getN();
+
+    static int n_gram_distance_fast(const std::vector<std::string> *, const std::vector<std::string> *);
+    static std::vector<std::string> *split_word(const std::string &);
 };
 
 

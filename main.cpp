@@ -59,7 +59,7 @@ int main(int argc, char **argv) {
     for (WordCase w_case : (*cases_db)) {
         foutput << w_case.toString() << "\t";
 
-        GlobalEdit::get_options(w_case, dict);
+        //GlobalEdit::get_options(w_case, dict);
         ged_opts_cnt += w_case.getGed_opts()->size();
         ged_success += std::find(w_case.getGed_opts()->begin(), w_case.getGed_opts()->end(), w_case.getCorrect_w())
                        != w_case.getGed_opts()->end() ? 1 : 0;
@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
         ngram_success += std::find(w_case.getNgram_opts()->begin(), w_case.getNgram_opts()->end(), w_case.getCorrect_w())
                        != w_case.getNgram_opts()->end() ? 1 : 0;
 
-        Soundex::get_options_exact(w_case, dict);
+        //Soundex::get_options_exact(w_case, dict);
         sndx_opts_cnt += w_case.getSndx_opts()->size();
         sndx_success += std::find(w_case.getSndx_opts()->begin(), w_case.getSndx_opts()->end(), w_case.getCorrect_w())
                          != w_case.getSndx_opts()->end() ? 1 : 0;
@@ -140,6 +140,14 @@ int main(int argc, char **argv) {
         cout << tmp << endl;
     }
      */
+
+    /*
+    WordCase w_test = WordCase();
+    w_test.setMisspell_w("lended");
+    string str = "deaden";
+    cout << NGram::n_gram_distance_fast(NGram::split_word(w_test.getMisspell_w()), NGram::split_word(str) )  << endl;
+     */
+
 
 
     // Close files

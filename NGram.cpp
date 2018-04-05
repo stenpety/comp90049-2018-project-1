@@ -50,9 +50,15 @@ int NGram::n_gram_distance(const std::string &cand_w, const std::string &dict_w)
 void NGram::get_options(WordCase &word_case, const std::vector<std::string> *dict) {
     int max_dst = std::numeric_limits<int>::max();
     int temp_dst;
+    std::vector<std::string> *word_msspl_s = split_word(word_case.getMisspell_w());
 
     for(std::string w_dict : *dict) {
-        temp_dst = n_gram_distance(word_case.getMisspell_w(), w_dict);
+
+        // Legacy code
+        //temp_dst = n_gram_distance(word_case.getMisspell_w(), w_dict);
+        std::vector<std::string> *word_dict_s = split_word(w_dict);
+        temp_dst = n_gram_distance_fast(word_msspl_s, word_dict_s);
+
         if (temp_dst < max_dst) {
             word_case.clear_options(gcnst::NGRAM);
             word_case.add_option(w_dict, gcnst::NGRAM);
@@ -60,7 +66,47 @@ void NGram::get_options(WordCase &word_case, const std::vector<std::string> *dic
         } else if (temp_dst == max_dst) {
             word_case.add_option(w_dict, gcnst::NGRAM);
         }
+
+        delete(word_dict_s);
     }
+
+    delete(word_msspl_s);
+}
+
+std::vector<std::string> *NGram::split_word(const std::string &wrd) {
+    auto n_set = new std::vector<std::string>;
+    std::string wrd_ext = " " + wrd + " ";
+    int i;
+
+    for (i = 0; i < wrd_ext.length() - N + 1; ++i) {
+        n_set->push_back(wrd_ext.std::string::substr(i, (unsigned long)N) );
+    }
+
+
+    std::sort(n_set->begin(), n_set->end());
+    return n_set;
+}
+
+// Input already sorted
+int NGram::n_gram_distance_fast(const std::vector<std::string> *cand_ws, const std::vector<std::string> *dict_ws) {
+    int cand_ws_sz = cand_ws->size();
+    int dict_ws_sz = dict_ws->size();
+    int dist = cand_ws_sz + dict_ws_sz;
+    int mtch = 0;
+    int i = 0, j = 0;
+    while (i < cand_ws_sz && j < dict_ws_sz) {
+        if ((*cand_ws)[i] == (*dict_ws)[j]) {
+            ++mtch;
+            ++i;
+            ++j;
+        } else if ((*cand_ws)[i] > (*dict_ws)[j]) {
+            ++j;
+        } else {
+            ++i;
+        }
+    }
+
+    return dist - 2*mtch;
 }
 
 void NGram::setN(int n) {
