@@ -8,9 +8,8 @@
 #include <string>
 #include <vector>
 #include <limits>
-#include "WordCase.h"
 
-//#define N 3
+#include "WordCase.h"
 
 class WordCase;
 

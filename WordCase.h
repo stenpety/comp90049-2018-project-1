@@ -10,8 +10,6 @@
 #include <iostream>
 
 #include "GlobalConst.h"
-#include "NGram.h"
-#include "Soundex.h"
 
 class WordCase {
 private:

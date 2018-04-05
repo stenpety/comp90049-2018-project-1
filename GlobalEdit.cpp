@@ -4,6 +4,25 @@
 
 #include "GlobalEdit.h"
 
+int GlobalEdit::MATCH_C = 1;
+int GlobalEdit::INSERT_C = -1;
+int GlobalEdit::DELETE_C = -1;
+int GlobalEdit::REPLACE_C = -1;
+
+int GlobalEdit::dist_limit = 0;
+
+static int dist_limit;
+
+
+void GlobalEdit::set_edit_parms(int match_c, int insert_c, int delete_c, int replace_c, int dist_limit) {
+    MATCH_C = match_c;
+    INSERT_C = insert_c;
+    DELETE_C = delete_c;
+    REPLACE_C = replace_c;
+
+    GlobalEdit::dist_limit = dist_limit;
+}
+
 int GlobalEdit::edit_distance(const std::string &cand_w, const std::string &dict_w, bool global) {
     int i, j, temp;
     int ins_c, del_c, mtc_c, rpl_c;
@@ -114,4 +133,5 @@ void GlobalEdit::get_options(WordCase &word_case, const std::vector<std::string>
     }
 
 }
+
 

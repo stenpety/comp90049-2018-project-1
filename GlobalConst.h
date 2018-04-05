@@ -12,7 +12,6 @@
 namespace gcnst {
     enum Methods {GED, LED, NGRAM, SNDX};
 
-
     class GConst {
 
     public:
@@ -26,5 +25,8 @@ namespace gcnst {
     };
 }
 
+#include "GlobalEdit.h"
+#include "NGram.h"
+#include "Soundex.h"
 
 #endif //COMP90049_2018_PROJECT_1_GLOBALCONST_H

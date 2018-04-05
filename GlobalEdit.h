@@ -8,21 +8,26 @@
 #include <string>
 #include <vector>
 #include <limits>
+
 #include "WordCase.h"
 
-#define MATCH_C 1
-#define INSERT_C (-1)
-#define DELETE_C (-1)
-#define REPLACE_C (-1)
+class WordCase;
 
 class GlobalEdit {
 private:
+    static int MATCH_C;
+    static int INSERT_C;
+    static int DELETE_C;
+    static int REPLACE_C;
+
+    static int dist_limit;
+
     static int edit_distance(const std::string &, const std::string &, bool);
 
 public:
+    static void set_edit_parms(int, int, int, int, int);
     static void get_options(WordCase &, const std::vector<std::string> *);
     static int edit_distance_fast(const std::string &, const std::string &, bool);
-
 };
 
 

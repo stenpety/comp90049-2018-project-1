@@ -3,24 +3,49 @@
 //
 
 #include "GlobalConst.h"
-namespace gcnst {
 
-    std::string GConst::addr_msspl;
-    std::string GConst::addr_crct;
-    std::string GConst::addr_dict;
+using namespace gcnst;
 
-    GConst::GConst() = default;
+std::string GConst::addr_msspl;
+std::string GConst::addr_crct;
+std::string GConst::addr_dict;
 
-    void GConst::config(const char *addr_conf) {
-        std::ifstream fconfig (addr_conf);
+GConst::GConst() = default;
 
-        getline(fconfig, addr_msspl);
-        getline(fconfig, addr_crct);
-        getline(fconfig, addr_dict);
+void GConst::config(const char *addr_conf) {
 
-        std::cout << "Configuration done!" << std::endl;
-        fconfig.close();
-    }
+    int match_c, insert_c, delete_c, replace_c, dist_limit;
+    int ngram_n;
+    int sndx_trunc;
+    std::string temp;
+
+    std::ifstream fconfig (addr_conf);
+
+    getline(fconfig, addr_msspl);
+    getline(fconfig, addr_crct);
+    getline(fconfig, addr_dict);
+
+
+    getline(fconfig, temp);
+    match_c = atoi(temp.c_str());
+    getline(fconfig, temp);
+    insert_c = atoi(temp.c_str());
+    getline(fconfig, temp);
+    delete_c = atoi(temp.c_str());
+    getline(fconfig, temp);
+    replace_c = atoi(temp.c_str());
+    getline(fconfig, temp);
+    dist_limit = atoi(temp.c_str());
+    GlobalEdit::set_edit_parms(match_c, insert_c, delete_c, replace_c, dist_limit);
+
+    getline(fconfig, temp);
+    ngram_n = atoi(temp.c_str());
+    NGram::setN(ngram_n);
+
+    getline(fconfig, temp);
+    sndx_trunc = atoi(temp.c_str());
+    Soundex::setTRUNC_TO(sndx_trunc);
+
+    std::cout << "Configuration done!" << std::endl;
+    fconfig.close();
 }
-
-//

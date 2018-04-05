@@ -2,16 +2,14 @@
 #include <fstream>
 #include <string>
 #include <vector>
-
-#include <time.h>
+#include <ctime>
 
 #include "GlobalConst.h"
-#include "GlobalEdit.h"
-#include "NGram.h"
-#include "Soundex.h"
 #include "WordCase.h"
 
 using namespace std;
+
+
 
 int main(int argc, char **argv) {
 
@@ -51,11 +49,11 @@ int main(int argc, char **argv) {
         dict->push_back(ln_dict);
     }
 
-    NGram::setN(3);
-    Soundex::setTRUNC_TO(7);
-
     // Output text file
     ofstream foutput (argv[2]);
+
+    // Table heading
+    foutput << "Misspelled" << "\t" << "Correct" << "\t" << "GED" << "\t" << "N-Gr" << "\t" << "Sndx" << endl;
 
     // output to file - tab separated
     for (WordCase w_case : (*cases_db)) {
@@ -76,7 +74,8 @@ int main(int argc, char **argv) {
         sndx_success += std::find(w_case.getSndx_opts()->begin(), w_case.getSndx_opts()->end(), w_case.getCorrect_w())
                          != w_case.getSndx_opts()->end() ? 1 : 0;
 
-
+        /*
+        // Full report - uncomment
         for (const string &tmp : *(w_case.getGed_opts()) ) {
             foutput << tmp << " ";
         }
@@ -91,14 +90,30 @@ int main(int argc, char **argv) {
             foutput << tmp << " ";
         }
         foutput << "\t" << w_case.getSndx_opts()->size() << endl;
+         */
+        foutput << "\t" << w_case.getGed_opts()->size() << "\t";
+        foutput << "\t" << w_case.getNgram_opts()->size() << "\t";
+        foutput << "\t" << w_case.getSndx_opts()->size() << endl;
 
         ++total_wrds;
+        cout << "Words processed: " << total_wrds << endl;
     }
 
     foutput << "Total words: " << total_wrds << endl;
-    foutput << "GED opts: " << ged_opts_cnt << "\t GED success: " << ged_success << endl;
-    foutput << "N-Gram opts: " << ngram_opts_cnt << "\t N-Gram success: " << ngram_success << endl;
-    foutput << "Soundex opts: " << sndx_opts_cnt << "\t Soundex success: " << sndx_success << endl;
+    foutput << "GED opts: " << ged_opts_cnt <<
+            "\tGED success: " << ged_success <<
+            "\tGED precision: " << (double)ged_success/ged_opts_cnt <<
+            "\tGED recall: " << (double)ged_success/total_wrds << endl;
+
+    foutput << "N-Gram opts: " << ngram_opts_cnt <<
+            "\t N-Gram success: " << ngram_success <<
+            "\tN-Gram precision: " << (double)ngram_success/ngram_opts_cnt <<
+            "\tN-Gram recall: " << (double)ngram_success/total_wrds << endl;
+
+    foutput << "Soundex opts: " << sndx_opts_cnt <<
+            "\t Soundex success: " << sndx_success <<
+            "\tSoundex precision: " << (double)sndx_success/sndx_opts_cnt <<
+            "\tSoundex recall: " << (double)sndx_success/total_wrds << endl;
 
     /*
     WordCase w_case = (*cases_db)[0];
