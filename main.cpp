@@ -48,6 +48,7 @@ int main(int argc, char **argv) {
     }
 
     NGram::setN(3);
+    Soundex::setTRUNC_TO(6);
 
     // Output text file
     ofstream foutput (argv[2]);

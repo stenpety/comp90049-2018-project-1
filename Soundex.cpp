@@ -4,6 +4,8 @@
 
 #include "Soundex.h"
 
+int Soundex::TRUNC_TO = 4;
+
 std::string *Soundex::sndx_convert(const std::string &cnd) {
     auto res = new std::string;
     int i;
@@ -77,4 +79,8 @@ void Soundex::get_options_exact(WordCase &word_case, const std::vector<std::stri
     }
 
     delete(sndx_msspl);
+}
+
+void Soundex::setTRUNC_TO(int TRUNC_TO) {
+    Soundex::TRUNC_TO = TRUNC_TO;
 }

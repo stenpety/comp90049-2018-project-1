@@ -12,11 +12,13 @@ class WordCase;
 
 class Soundex {
 private:
-    static const int TRUNC_TO = 4;
+    static int TRUNC_TO;
 
 public:
     static std::string *sndx_convert(const std::string &);
     static void get_options_exact(WordCase &, const std::vector<std::string> *);
+
+    static void setTRUNC_TO(int TRUNC_TO);
 };
 
 
