@@ -11,8 +11,6 @@
 
 #include "WordCase.h"
 
-#define NOLIM_CODE -9999
-
 class WordCase;
 
 class GlobalEdit {

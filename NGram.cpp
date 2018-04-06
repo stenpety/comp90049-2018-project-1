@@ -5,9 +5,24 @@
 #include "NGram.h"
 
 int NGram::N;
+int NGram::score_lim;
 
 NGram::NGram() {}
 
+void NGram::setNgramParms(int N, int score_lim) {
+    NGram::N = N;
+    NGram::score_lim = score_lim;
+}
+
+int NGram::getN() {
+    return N;
+}
+
+int NGram::getScore_lim() {
+    return score_lim;
+}
+
+// Legacy code
 int NGram::n_gram_distance(const std::string &cand_w, const std::string &dict_w) {
 
     int res = 0, cmn = 0;
@@ -47,35 +62,10 @@ int NGram::n_gram_distance(const std::string &cand_w, const std::string &dict_w)
     return res;
 }
 
-/*
-void NGram::get_options(WordCase &word_case, const std::vector<std::string> *dict) {
-    int max_dst = std::numeric_limits<int>::max();
-    int temp_dst;
-    std::vector<std::string> *word_msspl_s = split_word(word_case.getMisspell_w());
-
-    for(std::string w_dict : *dict) {
-
-        // Legacy code
-        //temp_dst = n_gram_distance(word_case.getMisspell_w(), w_dict);
-        std::vector<std::string> *word_dict_s = split_word(w_dict);
-        temp_dst = n_gram_distance_fast(word_msspl_s, word_dict_s);
-
-        if (temp_dst < max_dst) {
-            word_case.clear_options(gcnst::NGRAM);
-            word_case.add_option(w_dict, gcnst::NGRAM);
-            max_dst = temp_dst;
-        } else if (temp_dst == max_dst) {
-            word_case.add_option(w_dict, gcnst::NGRAM);
-        }
-        delete(word_dict_s);
-    }
-    delete(word_msspl_s);
-}
- */
 void NGram::get_options(WordCase &word_case, const std::vector<std::vector<std::string>*> *dict_ngr_sort,
                         const std::vector<std::string> *dict) {
-    int max_dst = std::numeric_limits<int>::max();
-    int temp_dst, i;
+    int max_score = score_lim == NOLIM_CODE ? std::numeric_limits<int>::max() : score_lim;
+    int temp_score, i;
     std::vector<std::string> *word_msspl_s = split_word(word_case.getMisspell_w());
 
     for(i = 0; i < dict->size(); ++i) {
@@ -84,13 +74,13 @@ void NGram::get_options(WordCase &word_case, const std::vector<std::vector<std::
         // Legacy code
         //temp_dst = n_gram_distance(word_case.getMisspell_w(), w_dict);
 
-        temp_dst = n_gram_distance_fast(word_msspl_s, dict_ws);
+        temp_score = n_gram_distance_fast(word_msspl_s, dict_ws);
 
-        if (temp_dst < max_dst) {
+        if (temp_score < max_score) {
             word_case.clear_options(gcnst::NGRAM);
             word_case.add_option((*dict)[i], gcnst::NGRAM);
-            max_dst = temp_dst;
-        } else if (temp_dst == max_dst) {
+            max_score = temp_score;
+        } else if (temp_score == max_score) {
             word_case.add_option((*dict)[i], gcnst::NGRAM);
         }
 
@@ -132,12 +122,4 @@ int NGram::n_gram_distance_fast(const std::vector<std::string> *cand_ws, const s
     }
 
     return dist - 2*mtch;
-}
-
-void NGram::setN(int n) {
-    NGram::N = n;
-}
-
-int NGram::getN() {
-    return N;
 }

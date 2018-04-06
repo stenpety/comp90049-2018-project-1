@@ -15,7 +15,7 @@ GConst::GConst() = default;
 void GConst::config(const char *addr_conf) {
 
     int match_c, insert_c, delete_c, replace_c, dist_limit;
-    int ngram_n;
+    int ngram_n, ngram_score_lim;
     int sndx_trunc;
     std::string temp;
 
@@ -40,7 +40,9 @@ void GConst::config(const char *addr_conf) {
 
     getline(fconfig, temp);
     ngram_n = atoi(temp.c_str());
-    NGram::setN(ngram_n);
+    getline(fconfig, temp);
+    ngram_score_lim = atoi(temp.c_str());
+    NGram::setNgramParms(ngram_n, ngram_score_lim);
 
     getline(fconfig, temp);
     sndx_trunc = atoi(temp.c_str());

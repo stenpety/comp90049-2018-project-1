@@ -9,6 +9,8 @@
 #include <fstream>
 #include <iostream>
 
+#define NOLIM_CODE -9999
+
 namespace gcnst {
     enum Methods {GED, LED, NGRAM, SNDX};
 
