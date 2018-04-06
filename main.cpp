@@ -14,29 +14,31 @@
 using namespace std;
 
 
-void compute(vector<WordCase> *cases_db, int *n, vector<string> *dict, vector<vector<string>*> *dict_ngr_sort) {
+void compute(vector<WordCase> *cases_db, int n, const vector<string> *dict, const vector<vector<string>*> *dict_ngr_sort) {
     int i;
     mutex mutex;
 
+    /*
     mutex.lock();
     *n += CHUNK;
     mutex.unlock();
+     */
 
-    for (i = *n-CHUNK; i < *n; ++i) {
-        WordCase w_case = (*cases_db)[i];
+    for (i = n; i < n+CHUNK; ++i) {
 
-        GlobalEdit::get_options(w_case, dict);
-        NGram::get_options(w_case, dict_ngr_sort, dict);
-        Soundex::get_options_exact(w_case, dict);
+        cout << "Processing word: " << i << endl;
+        GlobalEdit::get_options((*cases_db)[i], dict);
+        NGram::get_options((*cases_db)[i], dict_ngr_sort, dict);
+        Soundex::get_options_exact((*cases_db)[i], dict);
     }
 }
 
-void calc_multithread(vector<WordCase> *cases_db, int *n, vector<string> *dict, vector<vector<string>*> *dict_ngr_sort) {
+void calc_multithread(vector<WordCase> *cases_db, int n, const vector<string> *dict, const vector<vector<string>*> *dict_ngr_sort) {
     vector<thread> threads;
     int i;
     for (i = 0; i < 4; ++i) {
-        threads.push_back(thread(compute, cases_db, n, dict, dict_ngr_sort));
-        cout << "Thread pushed, n = " << *n << endl;
+        threads.push_back(thread(compute, cases_db, (n+i)*CHUNK, dict, dict_ngr_sort));
+        cout << "Thread " << i << " pushed, n = " << (n+i)*CHUNK << endl;
     }
 
     for(int i = 0; i < threads.size() ; i++) {
@@ -91,10 +93,11 @@ int main(int argc, char **argv) {
     ofstream foutput (argv[2]);
 
     // Here magic comes
-    calc_multithread(cases_db, &n, dict, dict_ngr_sort);
+    calc_multithread(cases_db, n, dict, dict_ngr_sort);
 
     for (const WordCase &w_case : *cases_db) {
         ged_opts_cnt += w_case.getGed_opts()->size();
+
         ged_success += std::find(w_case.getGed_opts()->begin(), w_case.getGed_opts()->end(), w_case.getCorrect_w())
                        != w_case.getGed_opts()->end() ? 1 : 0;
 
