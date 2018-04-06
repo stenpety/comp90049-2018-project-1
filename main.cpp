@@ -144,6 +144,7 @@ int main(int argc, char **argv) {
     foutput << "N-Gram parameters:" << endl;
     foutput << "N: " << NGram::getN() << endl;
     foutput << "Score limit: " << NGram::getScore_lim() << endl;
+    foutput << "Dice threshold: " << NGram::getDice_th() << endl;
 
     foutput << "\n*** SOUNDEX ***" << endl;
     foutput << "Predictions: " << sndx_opts_cnt <<

@@ -16,6 +16,7 @@ void GConst::config(const char *addr_conf) {
 
     int match_c, insert_c, delete_c, replace_c, dist_limit;
     int ngram_n, ngram_score_lim;
+    double ngram_dice_th;
     int sndx_trunc;
     std::string temp;
 
@@ -42,7 +43,9 @@ void GConst::config(const char *addr_conf) {
     ngram_n = atoi(temp.c_str());
     getline(fconfig, temp);
     ngram_score_lim = atoi(temp.c_str());
-    NGram::setNgramParms(ngram_n, ngram_score_lim);
+    getline(fconfig, temp);
+    ngram_dice_th = atof(temp.c_str()); //!!!
+    NGram::setNgramParms(ngram_n, ngram_score_lim, ngram_dice_th);
 
     getline(fconfig, temp);
     sndx_trunc = atoi(temp.c_str());

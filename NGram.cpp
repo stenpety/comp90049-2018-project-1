@@ -6,12 +6,14 @@
 
 int NGram::N;
 int NGram::score_lim;
+double NGram::dice_th;
 
-NGram::NGram() {}
+NGram::NGram() = default;
 
-void NGram::setNgramParms(int N, int score_lim) {
+void NGram::setNgramParms(int N, int score_lim, double dice_th) {
     NGram::N = N;
     NGram::score_lim = score_lim;
+    NGram::dice_th = dice_th;
 }
 
 int NGram::getN() {
@@ -20,6 +22,10 @@ int NGram::getN() {
 
 int NGram::getScore_lim() {
     return score_lim;
+}
+
+double NGram::getDice_th() {
+    return dice_th;
 }
 
 // Legacy code
@@ -64,9 +70,12 @@ int NGram::n_gram_distance(const std::string &cand_w, const std::string &dict_w)
 
 void NGram::get_options(WordCase &word_case, const std::vector<std::vector<std::string>*> *dict_ngr_sort,
                         const std::vector<std::string> *dict) {
-    int max_score = score_lim == NOLIM_CODE ? std::numeric_limits<int>::max() : score_lim;
-    int temp_score, i;
+    //int min_score = score_lim == NOLIM_CODE ? std::numeric_limits<int>::max() : score_lim;
+    //int temp_score;
+    double max_dice_sim = dice_th;
+    double temp_dice_sim;
     std::vector<std::string> *word_msspl_s = split_word(word_case.getMisspell_w());
+    int i;
 
     for(i = 0; i < dict->size(); ++i) {
 
@@ -74,15 +83,30 @@ void NGram::get_options(WordCase &word_case, const std::vector<std::vector<std::
         // Legacy code
         //temp_dst = n_gram_distance(word_case.getMisspell_w(), w_dict);
 
+        /*
+        // For use with n-gram distance
         temp_score = n_gram_distance_fast(word_msspl_s, dict_ws);
 
-        if (temp_score < max_score) {
+        if (temp_score < min_score) {
             word_case.clear_options(gcnst::NGRAM);
             word_case.add_option((*dict)[i], gcnst::NGRAM);
-            max_score = temp_score;
-        } else if (temp_score == max_score) {
+            min_score = temp_score;
+        } else if (temp_score == min_score) {
             word_case.add_option((*dict)[i], gcnst::NGRAM);
         }
+         */
+
+        // For use with Dice similarity
+        temp_dice_sim = n_gram_dice(word_msspl_s, dict_ws);
+
+        if (temp_dice_sim > max_dice_sim) {
+            word_case.clear_options(gcnst::NGRAM);
+            word_case.add_option((*dict)[i], gcnst::NGRAM);
+            max_dice_sim = temp_dice_sim;
+        } else if (max_dice_sim-temp_dice_sim < DICE_RNG) {
+            word_case.add_option((*dict)[i], gcnst::NGRAM);
+        }
+
 
     }
     delete(word_msspl_s);
@@ -94,7 +118,7 @@ std::vector<std::string> *NGram::split_word(const std::string &wrd) {
     int i;
 
     for (i = 0; i < wrd_ext.length() - N + 1; ++i) {
-        n_set->push_back(wrd_ext.std::string::substr(i, (unsigned long)N) );
+        n_set->push_back(wrd_ext.std::string::substr(static_cast<unsigned long>(i), (unsigned long)N) );
     }
 
 
@@ -104,11 +128,12 @@ std::vector<std::string> *NGram::split_word(const std::string &wrd) {
 
 // Input already sorted
 int NGram::n_gram_distance_fast(const std::vector<std::string> *cand_ws, const std::vector<std::string> *dict_ws) {
-    int cand_ws_sz = cand_ws->size();
-    int dict_ws_sz = dict_ws->size();
-    int dist = cand_ws_sz + dict_ws_sz;
-    int mtch = 0;
+
+    unsigned long cand_ws_sz = cand_ws->size();
+    unsigned long  dict_ws_sz = dict_ws->size();
+    unsigned long mtch = 0;
     int i = 0, j = 0;
+
     while (i < cand_ws_sz && j < dict_ws_sz) {
         if ((*cand_ws)[i] == (*dict_ws)[j]) {
             ++mtch;
@@ -121,5 +146,28 @@ int NGram::n_gram_distance_fast(const std::vector<std::string> *cand_ws, const s
         }
     }
 
-    return dist - 2*mtch;
+    return cand_ws_sz + dict_ws_sz - 2*mtch;
 }
+
+double NGram::n_gram_dice(const std::vector<std::string> *cand_ws, const std::vector<std::string> *dict_ws) {
+
+    int cand_ws_sz = cand_ws->size();
+    int dict_ws_sz = dict_ws->size();
+    int mtch = 0;
+    int i = 0, j = 0;
+
+    while (i < cand_ws_sz && j < dict_ws_sz) {
+        if ((*cand_ws)[i] == (*dict_ws)[j]) {
+            ++mtch;
+            ++i;
+            ++j;
+        } else if ((*cand_ws)[i] > (*dict_ws)[j]) {
+            ++j;
+        } else {
+            ++i;
+        }
+    }
+
+    return (2 * (double)mtch) / (cand_ws_sz + dict_ws_sz);
+}
+
