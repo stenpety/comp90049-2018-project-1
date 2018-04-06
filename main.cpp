@@ -9,11 +9,9 @@
 #include "GlobalConst.h"
 #include "WordCase.h"
 
-#define CHUNK 3
-
 using namespace std;
 
-
+// Thread function
 void compute(vector<WordCase> *cases_db, int n, const vector<string> *dict, const vector<vector<string>*> *dict_ngr_sort) {
     int i;
     mutex mutex;
@@ -23,7 +21,9 @@ void compute(vector<WordCase> *cases_db, int n, const vector<string> *dict, cons
     *n += CHUNK;
     mutex.unlock();
      */
-    int last = n+CHUNK >= cases_db->size() ? cases_db->size() : n+CHUNK;
+    unsigned long chunk = cases_db->size() / thread::hardware_concurrency() + 1;
+
+    unsigned long last = n+chunk >= cases_db->size() ? cases_db->size() : n+chunk;
 
     for (i = n; i < last; ++i) {
 
@@ -34,18 +34,20 @@ void compute(vector<WordCase> *cases_db, int n, const vector<string> *dict, cons
     }
 }
 
+// This function manages threads
 void calc_multithread(vector<WordCase> *cases_db, int n, const vector<string> *dict, const vector<vector<string>*> *dict_ngr_sort) {
     vector<thread> threads;
     unsigned max_threads = thread::hardware_concurrency();
-    cout << "Max threads: " << max_threads << endl;
+    unsigned long chunk = (cases_db->size() / max_threads + 1);
+    cout << "Max threads: " << max_threads << ". Chunk size: " << chunk << endl;
 
-    int i;
+    unsigned long i;
     for (i = 0; i < max_threads; ++i) {
-        threads.push_back(thread(compute, cases_db, (n+i)*CHUNK, dict, dict_ngr_sort));
-        cout << "Thread " << i << " pushed, n = " << (n+i)*CHUNK << endl;
+        threads.emplace_back(compute, cases_db, (n+i)*chunk, dict, dict_ngr_sort);
+        cout << "Thread " << i << " pushed, n = " << (n+i)*chunk << endl;
     }
 
-    for(int i = 0; i < threads.size() ; i++) {
+    for(i = 0; i < threads.size() ; i++) {
         threads.at(i).join();
     }
 }
