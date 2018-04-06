@@ -90,7 +90,7 @@ int main(int argc, char **argv) {
         cases_db->push_back(temp);
     }
 
-    // Populate dictionary
+    // Populate dictionary with words and n-gram sets
     ifstream fdict (gcnst::GConst::addr_dict.c_str());
     while (getline(fdict, ln_dict)) {
         dict->push_back(ln_dict);

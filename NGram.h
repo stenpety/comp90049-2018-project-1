@@ -18,7 +18,7 @@ private:
     static int N;
     static int score_lim;
     static int n_gram_distance(const std::string &, const std::string &);
-
+    static int n_gram_distance_fast(const std::vector<std::string> *, const std::vector<std::string> *);
 public:
     NGram();
 
@@ -32,7 +32,7 @@ public:
 
     static int getScore_lim();
 
-    static int n_gram_distance_fast(const std::vector<std::string> *, const std::vector<std::string> *);
+
     static std::vector<std::string> *split_word(const std::string &);
 };
 
