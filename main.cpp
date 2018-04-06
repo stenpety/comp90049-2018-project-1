@@ -9,7 +9,7 @@
 #include "GlobalConst.h"
 #include "WordCase.h"
 
-#define CHUNK 5
+#define CHUNK 3
 
 using namespace std;
 
@@ -23,8 +23,9 @@ void compute(vector<WordCase> *cases_db, int n, const vector<string> *dict, cons
     *n += CHUNK;
     mutex.unlock();
      */
+    int last = n+CHUNK >= cases_db->size() ? cases_db->size() : n+CHUNK;
 
-    for (i = n; i < n+CHUNK; ++i) {
+    for (i = n; i < last; ++i) {
 
         cout << "Processing word: " << i << endl;
         GlobalEdit::get_options((*cases_db)[i], dict);
@@ -35,8 +36,11 @@ void compute(vector<WordCase> *cases_db, int n, const vector<string> *dict, cons
 
 void calc_multithread(vector<WordCase> *cases_db, int n, const vector<string> *dict, const vector<vector<string>*> *dict_ngr_sort) {
     vector<thread> threads;
+    unsigned max_threads = thread::hardware_concurrency();
+    cout << "Max threads: " << max_threads << endl;
+
     int i;
-    for (i = 0; i < 4; ++i) {
+    for (i = 0; i < max_threads; ++i) {
         threads.push_back(thread(compute, cases_db, (n+i)*CHUNK, dict, dict_ngr_sort));
         cout << "Thread " << i << " pushed, n = " << (n+i)*CHUNK << endl;
     }
@@ -50,6 +54,8 @@ int main(int argc, char **argv) {
 
     string ln_misspell, ln_correct, ln_dict;
     int n = 0;
+
+
     int total_wrds = 0;
     int ged_opts_cnt = 0, ged_success = 0;
     int ngram_opts_cnt = 0, ngram_success = 0;
