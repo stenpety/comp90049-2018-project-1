@@ -1,56 +1,17 @@
 #include <iostream>
 #include <fstream>
-#include <string>
 #include <vector>
-#include <ctime>
 #include <thread>
-#include <mutex>
 
 #include "GlobalConst.h"
-#include "WordCase.h"
 
 using namespace std;
 
-// Thread function
-void compute(vector<WordCase> *cases_db, int n, const vector<string> *dict, const vector<vector<string>*> *dict_ngr_sort) {
-    int i;
-    mutex mutex;
+void compute(vector<WordCase> *cases_db, int n, const vector<string> *dict,
+             const vector<vector<string>*> *dict_ngr_sort);
 
-    /*
-    mutex.lock();
-    *n += CHUNK;
-    mutex.unlock();
-     */
-    unsigned long chunk = cases_db->size() / thread::hardware_concurrency() + 1;
-
-    unsigned long last = n+chunk >= cases_db->size() ? cases_db->size() : n+chunk;
-
-    for (i = n; i < last; ++i) {
-
-        cout << "Processing word: " << i << endl;
-        GlobalEdit::get_options((*cases_db)[i], dict);
-        NGram::get_options((*cases_db)[i], dict_ngr_sort, dict);
-        Soundex::get_options_exact((*cases_db)[i], dict);
-    }
-}
-
-// This function manages threads
-void calc_multithread(vector<WordCase> *cases_db, int n, const vector<string> *dict, const vector<vector<string>*> *dict_ngr_sort) {
-    vector<thread> threads;
-    unsigned max_threads = thread::hardware_concurrency();
-    unsigned long chunk = (cases_db->size() / max_threads + 1);
-    cout << "Max threads: " << max_threads << ". Chunk size: " << chunk << endl;
-
-    unsigned long i;
-    for (i = 0; i < max_threads; ++i) {
-        threads.emplace_back(compute, cases_db, (n+i)*chunk, dict, dict_ngr_sort);
-        cout << "Thread " << i << " pushed, n = " << (n+i)*chunk << endl;
-    }
-
-    for(i = 0; i < threads.size() ; i++) {
-        threads.at(i).join();
-    }
-}
+void calc_multithread(vector<WordCase> *cases_db, int n, const vector<string> *dict,
+                      const vector<vector<string>*> *dict_ngr_sort);
 
 int main(int argc, char **argv) {
 
@@ -168,4 +129,45 @@ int main(int argc, char **argv) {
     cout << "Execution time: " << (double)(clock() - timer_start)/CLOCKS_PER_SEC << " s." << endl;
 
     return 0;
+}
+
+void compute(vector<WordCase> *cases_db, int n, const vector<string> *dict,
+             const vector<vector<string> *> *dict_ngr_sort) {
+    int i;
+    mutex mutex;
+
+    /*
+    mutex.lock();
+    *n += CHUNK;
+    mutex.unlock();
+     */
+    unsigned long chunk = cases_db->size() / thread::hardware_concurrency() + 1;
+
+    unsigned long last = n+chunk >= cases_db->size() ? cases_db->size() : n+chunk;
+
+    for (i = n; i < last; ++i) {
+
+        cout << "Processing word: " << i << endl;
+        GlobalEdit::get_options((*cases_db)[i], dict);
+        NGram::get_options((*cases_db)[i], dict_ngr_sort, dict);
+        Soundex::get_options_exact((*cases_db)[i], dict);
+    }
+}
+
+void calc_multithread(vector<WordCase> *cases_db, int n, const vector<string> *dict,
+                      const vector<vector<string>*> *dict_ngr_sort) {
+    vector<thread> threads;
+    unsigned max_threads = thread::hardware_concurrency();
+    unsigned long chunk = (cases_db->size() / max_threads + 1);
+    cout << "Max threads: " << max_threads << ". Chunk size: " << chunk << endl;
+
+    unsigned long i;
+    for (i = 0; i < max_threads; ++i) {
+        threads.emplace_back(compute, cases_db, (n+i)*chunk, dict, dict_ngr_sort);
+        cout << "Thread " << i << " pushed, n = " << (n+i)*chunk << endl;
+    }
+
+    for(i = 0; i < threads.size() ; i++) {
+        threads.at(i).join();
+    }
 }
