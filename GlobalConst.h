@@ -9,7 +9,7 @@
 #include <fstream>
 #include <iostream>
 
-#define NOLIM_CODE -9999
+#define NOLIM_CODE (-9999)
 
 namespace gcnst {
     enum Methods {GED, LED, NGRAM, SNDX};
@@ -23,6 +23,11 @@ namespace gcnst {
 
         GConst();
 
+        /**
+         * Configures parameters:
+         * misspell, correct and dictionary files addresses
+         * GED, N-Gram and Soundex options
+         */
         static void config(const char *);
     };
 }

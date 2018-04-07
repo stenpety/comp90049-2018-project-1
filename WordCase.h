@@ -11,6 +11,12 @@
 
 #include "GlobalConst.h"
 
+/**
+ * Class represents a test case with data fields for:
+ * misspelled word
+ * correct word
+ * arrays of candidates for all spell. correct. methods employed
+ */
 class WordCase {
 private:
     std::string misspell_w;

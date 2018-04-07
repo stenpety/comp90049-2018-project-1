@@ -200,7 +200,7 @@ void calc_multithread(vector<WordCase> *cases_db, int n, const vector<string> *d
         threads.emplace_back(compute, cases_db, (n+i)*chunk, dict, dict_ngr_sort);
         cout << "Thread " << i << " pushed, n = " << (n+i)*chunk << endl;
     }
-    
+
     // Join all threads
     for(i = 0; i < threads.size() ; i++) {
         threads.at(i).join();

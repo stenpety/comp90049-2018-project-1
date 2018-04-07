@@ -14,8 +14,19 @@ class Soundex {
 private:
     static int TRUNC_TO;
 
-public:
+    /**
+     * Converts a string to its Soundex representation
+     * @return Soundex string
+     */
     static std::string *sndx_convert(const std::string &);
+
+public:
+
+    /**
+     * Gets all candidates for a given word from the dictionary
+     * Does not return anything
+     * Modifies input parameter of WordCase type
+     */
     static void get_options_exact(WordCase &, const std::vector<std::string> *);
 
     static void setTRUNC_TO(int TRUNC_TO);

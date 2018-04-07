@@ -20,13 +20,29 @@ private:
     static int N;
     static int score_lim;
     static double dice_th;
+
+    // Legacy code
     static int n_gram_distance(const std::string &, const std::string &);
+
+    /**
+     * Calculates N-Gram score for given sets of n-grams (representing words)
+     * @return score
+     */
     static int n_gram_distance_fast(const std::vector<std::string> *, const std::vector<std::string> *);
+
+    /**
+     * Calculates Dice coefficient for the 2 sets of n-grams (representing words)
+     * @return Dice coefficient
+     */
     static double n_gram_dice(const std::vector<std::string> *, const std::vector<std::string> *);
 public:
     NGram();
 
-    //static void get_options(WordCase &, const std::vector<std::string> *);
+    /**
+     * Gets all candidates for a given word from the dictionary
+     * Does not return anything
+     * Modifies input parameter of WordCase type
+     */
     static void get_options(WordCase &, const std::vector<std::vector<std::string>*> *,
             const std::vector<std::string> *);
 

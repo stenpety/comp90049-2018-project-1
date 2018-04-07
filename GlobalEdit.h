@@ -15,19 +15,31 @@ class WordCase;
 
 class GlobalEdit {
 private:
-    static int MATCH_C;
-    static int INSERT_C;
-    static int DELETE_C;
-    static int REPLACE_C;
+    static int MATCH_C; // cost of match
+    static int INSERT_C; // cost of insert
+    static int DELETE_C; // cost of delete
+    static int REPLACE_C; // cost of replace
 
     static int dist_limit;
 
+    // Legacy code
     static int edit_distance(const std::string &, const std::string &, bool);
+
+    /**
+     * Calculates Global Edit distance for the given pair of words
+     * @return edit distance
+     */
+    static int edit_distance_fast(const std::string &, const std::string &, bool);
 
 public:
     static void set_edit_parms(int, int, int, int, int);
+
+    /**
+     * Gets all candidates for a given word from the dictionary
+     * Does not return anything
+     * Modifies input parameter of WordCase type
+     */
     static void get_options(WordCase &, const std::vector<std::string> *);
-    static int edit_distance_fast(const std::string &, const std::string &, bool);
 
     static int getMATCH_C();
 
