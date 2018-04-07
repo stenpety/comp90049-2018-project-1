@@ -104,7 +104,7 @@ const std::string & WordCase::getMisspell_w() const {
 
 // found = std::find(ged_opts->begin(), ged_opts->end(), correct_w) != ged_opts->end();
 
-const std::string WordCase::toString() {
+const std::string WordCase::toString() const {
     return misspell_w + "\t" + correct_w;
 }
 

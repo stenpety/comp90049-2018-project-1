@@ -29,6 +29,16 @@ void compute(vector<WordCase> *cases_db, int n, const vector<string> *dict,
 void calc_multithread(vector<WordCase> *cases_db, int n, const vector<string> *dict,
                       const vector<vector<string>*> *dict_ngr_sort);
 
+string *vect_str(const vector<string> *v) {
+    auto res = new string;
+    for (string s : *v) {
+        *res += s;
+        *res += " ";
+    }
+    return res;
+}
+
+
 /**
  * Main function.
  * Gets input parameters
@@ -86,26 +96,91 @@ int main(int argc, char **argv) {
 
     // Output text file
     ofstream foutput (argv[2]);
+    ofstream fexample ("/Users/stenpety/test/knowtech/comp90049_examples.txt");
 
     // Here magic comes
     calc_multithread(cases_db, n, dict, dict_ngr_sort);
 
     // Count all returned candidates and determine success
     for (const WordCase &w_case : *cases_db) {
-        ged_opts_cnt += w_case.getGed_opts()->size();
+        unsigned long opts = 0;
+        int sccs = 0;
+        string *v = nullptr;
 
-        ged_success += std::find(w_case.getGed_opts()->begin(), w_case.getGed_opts()->end(), w_case.getCorrect_w())
+        opts = w_case.getGed_opts()->size();
+        ged_opts_cnt += opts;
+
+        sccs = std::find(w_case.getGed_opts()->begin(), w_case.getGed_opts()->end(), w_case.getCorrect_w())
                        != w_case.getGed_opts()->end() ? 1 : 0;
+        ged_success += sccs;
 
-        ngram_opts_cnt += w_case.getNgram_opts()->size();
-        ngram_success += std::find(w_case.getNgram_opts()->begin(), w_case.getNgram_opts()->end(), w_case.getCorrect_w())
+        if (opts >= 5) {
+            v = vect_str(w_case.getGed_opts());
+            if (sccs) {
+                fexample << "GED\t5+\t" << w_case.toString() << "\t" << *v << endl;
+            } else {
+                fexample << "GED\t5-\t" << w_case.toString() << "\t" << *v << endl;
+            }
+            delete(v);
+        } else {
+            if (opts == 1 && sccs) {
+                v = vect_str(w_case.getGed_opts());
+                fexample << "GED\t!!!\t" << w_case.toString() << "\t" << *v << endl;
+                delete(v);
+            }
+
+        }
+
+
+        opts = w_case.getNgram_opts()->size();
+        ngram_opts_cnt += opts;
+        sccs = std::find(w_case.getNgram_opts()->begin(), w_case.getNgram_opts()->end(), w_case.getCorrect_w())
                          != w_case.getNgram_opts()->end() ? 1 : 0;
+        ngram_success += sccs;
 
-        sndx_opts_cnt += w_case.getSndx_opts()->size();
-        sndx_success += std::find(w_case.getSndx_opts()->begin(), w_case.getSndx_opts()->end(), w_case.getCorrect_w())
+        if (opts >= 5) {
+            v = vect_str(w_case.getNgram_opts());
+            if (sccs) {
+                fexample << "NGRAM\t5+\t" << w_case.toString() << "\t" << *v << endl;
+            } else {
+                fexample << "NGRAM\t5-\t" << w_case.toString() << "\t" << *v << endl;
+            }
+            delete(v);
+        } else {
+            if (opts == 1 && sccs) {
+                v = vect_str(w_case.getNgram_opts());
+                fexample << "NGRAM\t!!!\t" << w_case.toString() << "\t" << *v << endl;
+                delete(v);
+            }
+
+        }
+
+
+        opts = w_case.getSndx_opts()->size();
+        sndx_opts_cnt += opts;
+        sccs = std::find(w_case.getSndx_opts()->begin(), w_case.getSndx_opts()->end(), w_case.getCorrect_w())
                         != w_case.getSndx_opts()->end() ? 1 : 0;
+        sndx_success += sccs;
+
+        if (opts >= 10) {
+            v = vect_str(w_case.getSndx_opts());
+            if (sccs) {
+                fexample << "SNDX\t10+\t" << w_case.toString() << "\t" << *v << endl;
+            } else {
+                fexample << "SNDX\t10-\t" << w_case.toString() << "\t" << *v << endl;
+            }
+            delete(v);
+        } else {
+            if (opts == 1 && sccs) {
+                v = vect_str(w_case.getSndx_opts());
+                fexample << "SNDX\t!!!\t" << w_case.toString() << "\t" << *v << endl;
+                delete(v);
+            }
+        }
+
 
         ++total_wrds;
+
     }
 
     // Form import
@@ -147,6 +222,7 @@ int main(int argc, char **argv) {
     fcorrect.close();
     fdict.close();
     foutput.close();
+    fexample.close();
 
     // Free memory
     delete(cases_db);

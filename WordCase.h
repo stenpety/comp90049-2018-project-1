@@ -51,7 +51,7 @@ public:
 
     const std::string &getMisspell_w() const;
 
-    const std::string toString();
+    const std::string toString() const;
 
     std::vector<std::string> *getGed_opts() const;
 
