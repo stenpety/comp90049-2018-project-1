@@ -7,12 +7,38 @@
 
 using namespace std;
 
+/**
+ * Launches determination of candidates over a chunk of data set
+ * @param cases_db data set
+ * @param n number of test case in data set to start with
+ * @param dict dictionary (as words)
+ * @param dict_ngr_sort dictionary (as sorted arrays of n-grams)
+ */
 void compute(vector<WordCase> *cases_db, int n, const vector<string> *dict,
              const vector<vector<string>*> *dict_ngr_sort);
 
+/**
+ * Launches compute() function in the maximum available number of threads
+ * Naive multi-threading implementation:
+ * data is splitted evenly between all available threads
+ * @param cases_db data set
+ * @param n number of test case in data set to start with
+ * @param dict dictionary (as words)
+ * @param dict_ngr_sort dictionary (as sorted arrays of n-grams)
+ */
 void calc_multithread(vector<WordCase> *cases_db, int n, const vector<string> *dict,
                       const vector<vector<string>*> *dict_ngr_sort);
 
+/**
+ * Main function.
+ * Gets input parameters
+ * Reads data set and dictionary
+ * Launches multi-threaded calculation
+ * Outputs results into a file
+ * @param argc number of app arguments
+ * @param argv arg vector. [1]: conf.file, [2]: output file
+ * @return 0 if OK, error code otherwise
+ */
 int main(int argc, char **argv) {
 
     string ln_misspell, ln_correct, ln_dict;
@@ -64,6 +90,7 @@ int main(int argc, char **argv) {
     // Here magic comes
     calc_multithread(cases_db, n, dict, dict_ngr_sort);
 
+    // Count all returned candidates and determine success
     for (const WordCase &w_case : *cases_db) {
         ged_opts_cnt += w_case.getGed_opts()->size();
 
@@ -126,6 +153,7 @@ int main(int argc, char **argv) {
     delete(dict);
     delete(dict_ngr_sort);
 
+    // Works incorrectly in multi-thread environment :(
     cout << "Execution time: " << (double)(clock() - timer_start)/CLOCKS_PER_SEC << " s." << endl;
 
     return 0;
@@ -141,6 +169,8 @@ void compute(vector<WordCase> *cases_db, int n, const vector<string> *dict,
     *n += CHUNK;
     mutex.unlock();
      */
+
+    // How many cases should each thread take
     unsigned long chunk = cases_db->size() / thread::hardware_concurrency() + 1;
 
     unsigned long last = n+chunk >= cases_db->size() ? cases_db->size() : n+chunk;
@@ -157,16 +187,21 @@ void compute(vector<WordCase> *cases_db, int n, const vector<string> *dict,
 void calc_multithread(vector<WordCase> *cases_db, int n, const vector<string> *dict,
                       const vector<vector<string>*> *dict_ngr_sort) {
     vector<thread> threads;
+
+    // How many threads are available
     unsigned max_threads = thread::hardware_concurrency();
     unsigned long chunk = (cases_db->size() / max_threads + 1);
     cout << "Max threads: " << max_threads << ". Chunk size: " << chunk << endl;
 
     unsigned long i;
+
+    // Run threads!
     for (i = 0; i < max_threads; ++i) {
         threads.emplace_back(compute, cases_db, (n+i)*chunk, dict, dict_ngr_sort);
         cout << "Thread " << i << " pushed, n = " << (n+i)*chunk << endl;
     }
-
+    
+    // Join all threads
     for(i = 0; i < threads.size() ; i++) {
         threads.at(i).join();
     }
