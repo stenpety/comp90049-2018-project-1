@@ -118,15 +118,23 @@ int GlobalEdit::edit_distance_fast(const std::string &cand_w, const std::string 
 }
 
 void GlobalEdit::get_options(WordCase &word_case, const std::vector<std::string> *dict) {
-    int max_dst = dist_limit == NOLIM_CODE ? std::numeric_limits<int>::min() : dist_limit;
+    int max_dst = std::numeric_limits<int>::min();
     int temp_dst;
 
     for(std::string w_dict : *dict) {
         temp_dst = edit_distance_fast(word_case.getMisspell_w(), w_dict, true);
         if (temp_dst > max_dst) {
+            std::vector<std::string> temp = *word_case.getGed_opts();
             word_case.clear_options(gcnst::GED);
             word_case.add_option(w_dict, gcnst::GED);
             max_dst = temp_dst;
+
+            for (std::string tmp_s : temp) {
+                int temp_d = edit_distance_fast(tmp_s, w_dict, true);
+                if (max_dst - temp_d <= dist_limit) {
+                    word_case.add_option(tmp_s, gcnst::GED);
+                }
+            }
         } else if (temp_dst == max_dst) {
             word_case.add_option(w_dict, gcnst::GED);
         }

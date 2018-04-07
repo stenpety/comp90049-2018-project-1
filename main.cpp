@@ -255,8 +255,8 @@ void compute(vector<WordCase> *cases_db, int n, const vector<string> *dict,
 
         cout << "Processing word: " << i << endl;
         GlobalEdit::get_options((*cases_db)[i], dict);
-        NGram::get_options((*cases_db)[i], dict_ngr_sort, dict);
-        Soundex::get_options_exact((*cases_db)[i], dict);
+        //NGram::get_options((*cases_db)[i], dict_ngr_sort, dict);
+        //Soundex::get_options_exact((*cases_db)[i], dict);
     }
 }
 
