@@ -130,11 +130,12 @@ void GlobalEdit::get_options(WordCase &word_case, const std::vector<std::string>
             max_dst = temp_dst;
 
             for (std::string tmp_s : temp) {
-                int temp_d = edit_distance_fast(tmp_s, w_dict, true);
+                int temp_d = edit_distance_fast(word_case.getMisspell_w(), tmp_s, true);
                 if (max_dst - temp_d <= dist_limit) {
                     word_case.add_option(tmp_s, gcnst::GED);
                 }
             }
+
         } else if (max_dst-temp_dst <= dist_limit) {
             word_case.add_option(w_dict, gcnst::GED);
         }
