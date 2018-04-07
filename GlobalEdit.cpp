@@ -135,7 +135,7 @@ void GlobalEdit::get_options(WordCase &word_case, const std::vector<std::string>
                     word_case.add_option(tmp_s, gcnst::GED);
                 }
             }
-        } else if (temp_dst == max_dst) {
+        } else if (max_dst-temp_dst <= dist_limit) {
             word_case.add_option(w_dict, gcnst::GED);
         }
     }
