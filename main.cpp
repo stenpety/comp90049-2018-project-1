@@ -31,7 +31,7 @@ void calc_multithread(vector<WordCase> *cases_db, int n, const vector<string> *d
 
 string *vect_str(const vector<string> *v) {
     auto res = new string;
-    for (string s : *v) {
+    for (const string &s : *v) {
         *res += s;
         *res += " ";
     }
@@ -103,59 +103,48 @@ int main(int argc, char **argv) {
 
     // Count all returned candidates and determine success
     for (const WordCase &w_case : *cases_db) {
-        unsigned long opts = 0;
-        int sccs = 0;
+        unsigned long ged_opts_d = 0, ngr_opts_d = 0;
+        int ged_sccs_d = 0, ngr_sccs_d = 0;
         string *v = nullptr;
 
-        opts = w_case.getGed_opts()->size();
-        ged_opts_cnt += opts;
+        ged_opts_d = w_case.getGed_opts()->size();
+        ged_opts_cnt += ged_opts_d;
 
-        sccs = std::find(w_case.getGed_opts()->begin(), w_case.getGed_opts()->end(), w_case.getCorrect_w())
+        ged_sccs_d = std::find(w_case.getGed_opts()->begin(), w_case.getGed_opts()->end(), w_case.getCorrect_w())
                        != w_case.getGed_opts()->end() ? 1 : 0;
-        ged_success += sccs;
-
-        if (opts >= 5) {
-            v = vect_str(w_case.getGed_opts());
-            if (sccs) {
-                fexample << "GED\t5+\t" << w_case.toString() << "\t" << *v << endl;
-            } else {
-                fexample << "GED\t5-\t" << w_case.toString() << "\t" << *v << endl;
-            }
-            delete(v);
-        } else {
-            if (opts == 1 && sccs) {
-                v = vect_str(w_case.getGed_opts());
-                fexample << "GED\t!!!\t" << w_case.toString() << "\t" << *v << endl;
-                delete(v);
-            }
-
-        }
+        ged_success += ged_sccs_d;
 
 
-        opts = w_case.getNgram_opts()->size();
-        ngram_opts_cnt += opts;
-        sccs = std::find(w_case.getNgram_opts()->begin(), w_case.getNgram_opts()->end(), w_case.getCorrect_w())
+        ngr_opts_d = w_case.getNgram_opts()->size();
+        ngram_opts_cnt += ngr_opts_d;
+        ngr_sccs_d = std::find(w_case.getNgram_opts()->begin(), w_case.getNgram_opts()->end(), w_case.getCorrect_w())
                          != w_case.getNgram_opts()->end() ? 1 : 0;
-        ngram_success += sccs;
+        ngram_success += ngr_sccs_d;
 
-        if (opts >= 5) {
-            v = vect_str(w_case.getNgram_opts());
-            if (sccs) {
-                fexample << "NGRAM\t5+\t" << w_case.toString() << "\t" << *v << endl;
-            } else {
-                fexample << "NGRAM\t5-\t" << w_case.toString() << "\t" << *v << endl;
-            }
+        if (ged_opts_d >=4 && !ged_sccs_d && ngr_sccs_d) {
+            fexample << "GED fail, N-Gram success" << endl;
+            v = vect_str(w_case.getGed_opts());
+            fexample << "GED\tfail\t" << w_case.toString() << "\t" << *v << endl;
             delete(v);
-        } else {
-            if (opts == 1 && sccs) {
-                v = vect_str(w_case.getNgram_opts());
-                fexample << "NGRAM\t!!!\t" << w_case.toString() << "\t" << *v << endl;
-                delete(v);
-            }
+            v = vect_str(w_case.getNgram_opts());
+            fexample << "NGRAM\tsuccess\t" << w_case.toString() << "\t" << *v << endl;
+            delete(v);
 
         }
 
+        if (ged_sccs_d && ngr_opts_d >= 4 && !ngr_sccs_d) {
+            fexample << "GED success, N-Gram fail" << endl;
+            v = vect_str(w_case.getGed_opts());
+            fexample << "GED\tsuccess\t" << w_case.toString() << "\t" << *v << endl;
+            delete(v);
+            v = vect_str(w_case.getNgram_opts());
+            fexample << "NGRAM\tfail\t" << w_case.toString() << "\t" << *v << endl;
+            delete(v);
 
+        }
+
+        // Examples search for Soundex - not used
+        /*
         opts = w_case.getSndx_opts()->size();
         sndx_opts_cnt += opts;
         sccs = std::find(w_case.getSndx_opts()->begin(), w_case.getSndx_opts()->end(), w_case.getCorrect_w())
@@ -177,7 +166,7 @@ int main(int argc, char **argv) {
                 delete(v);
             }
         }
-
+         */
 
         ++total_wrds;
 
@@ -255,8 +244,8 @@ void compute(vector<WordCase> *cases_db, int n, const vector<string> *dict,
 
         cout << "Processing word: " << i << endl;
         GlobalEdit::get_options((*cases_db)[i], dict);
-        //NGram::get_options((*cases_db)[i], dict_ngr_sort, dict);
-        //Soundex::get_options_exact((*cases_db)[i], dict);
+        NGram::get_options((*cases_db)[i], dict_ngr_sort, dict);
+        Soundex::get_options_exact((*cases_db)[i], dict);
     }
 }
 
