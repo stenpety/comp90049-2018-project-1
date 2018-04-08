@@ -80,30 +80,29 @@ void NGram::get_options(WordCase &word_case, const std::vector<std::vector<std::
     for(i = 0; i < dict->size(); ++i) {
 
         std::vector<std::string> *dict_ws = (*dict_ngr_sort)[i];
-        // Legacy code
-        //temp_dst = n_gram_distance(word_case.getMisspell_w(), w_dict);
-
-        /*
-        // For use with n-gram distance
-        temp_score = n_gram_distance_fast(word_msspl_s, dict_ws);
-
-        if (temp_score < min_score) {
-            word_case.clear_options(gcnst::NGRAM);
-            word_case.add_option((*dict)[i], gcnst::NGRAM);
-            min_score = temp_score;
-        } else if (temp_score == min_score) {
-            word_case.add_option((*dict)[i], gcnst::NGRAM);
-        }
-         */
 
         // For use with Dice similarity
         temp_dice_sim = n_gram_dice(word_msspl_s, dict_ws);
 
         if (temp_dice_sim > max_dice_sim) {
+            std::vector<std::string> temp = *word_case.getNgram_opts();
             word_case.clear_options(gcnst::NGRAM);
             word_case.add_option((*dict)[i], gcnst::NGRAM);
             max_dice_sim = temp_dice_sim;
-        } else if (max_dice_sim-temp_dice_sim < DICE_RNG) {
+
+            for (const std::string tmp : temp) {
+                std::vector<std::string> *tmp_s = split_word(tmp);
+                double temp_d = n_gram_dice(word_msspl_s, tmp_s);
+
+                if (max_dice_sim - temp_d <= DICE_RNG) {
+                    word_case.add_option(tmp, gcnst::NGRAM);
+                }
+                delete(tmp_s);
+                tmp_s = nullptr;
+            }
+
+
+        } else if (max_dice_sim-temp_dice_sim <= DICE_RNG) {
             word_case.add_option((*dict)[i], gcnst::NGRAM);
         }
 
