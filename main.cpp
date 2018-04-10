@@ -121,7 +121,9 @@ int main(int argc, char **argv) {
                          != w_case.getNgram_opts()->end() ? 1 : 0;
         ngram_success += ngr_sccs_d;
 
-        if (ged_opts_d >=4 && !ged_sccs_d && ngr_sccs_d) {
+        //examples search
+        /*
+        if (ged_opts_d >=2 && !ged_sccs_d && ngr_sccs_d) {
             fexample << "GED fail, N-Gram success" << endl;
             v = vect_str(w_case.getGed_opts());
             fexample << "GED\tfail\t" << w_case.toString() << "\t" << *v << endl;
@@ -129,10 +131,10 @@ int main(int argc, char **argv) {
             v = vect_str(w_case.getNgram_opts());
             fexample << "NGRAM\tsuccess\t" << w_case.toString() << "\t" << *v << endl;
             delete(v);
-
+            fexample << "\n" << endl;
         }
 
-        if (ged_sccs_d && ngr_opts_d >= 4 && !ngr_sccs_d) {
+        if (ged_sccs_d && ngr_opts_d >= 2 && !ngr_sccs_d) {
             fexample << "GED success, N-Gram fail" << endl;
             v = vect_str(w_case.getGed_opts());
             fexample << "GED\tsuccess\t" << w_case.toString() << "\t" << *v << endl;
@@ -140,8 +142,41 @@ int main(int argc, char **argv) {
             v = vect_str(w_case.getNgram_opts());
             fexample << "NGRAM\tfail\t" << w_case.toString() << "\t" << *v << endl;
             delete(v);
-
+            fexample << "\n" << endl;
         }
+
+        if (ged_opts_d == 1 && ged_sccs_d) {
+            fexample << "GED one shot" << endl;
+            v = vect_str(w_case.getGed_opts());
+            fexample << "GED\t1 shot\t" << w_case.toString() << "\t" << *v << endl;
+            delete(v);
+            fexample << "\n" << endl;
+        }
+
+        if (ged_opts_d >= 10 && !ged_sccs_d) {
+            fexample << "GED fail" << endl;
+            v = vect_str(w_case.getGed_opts());
+            fexample << "GED\t10x fail\t" << w_case.toString() << "\t" << *v << endl;
+            delete(v);
+            fexample << "\n" << endl;
+        }
+
+        if (ngr_opts_d == 1 && ngr_sccs_d) {
+            fexample << "NGRAM one shot" << endl;
+            v = vect_str(w_case.getNgram_opts());
+            fexample << "NGRAM\t1 shot\t" << w_case.toString() << "\t" << *v << endl;
+            delete(v);
+            fexample << "\n" << endl;
+        }
+
+        if (ngr_opts_d >= 10 && !ngr_sccs_d) {
+            fexample << "NGRAM fail" << endl;
+            v = vect_str(w_case.getNgram_opts());
+            fexample << "NGRAM\t10x fail\t" << w_case.toString() << "\t" << *v << endl;
+            delete(v);
+            fexample << "\n" << endl;
+        }
+         */
 
         // Examples search for Soundex - not used
         /*
@@ -167,6 +202,7 @@ int main(int argc, char **argv) {
             }
         }
          */
+
 
         ++total_wrds;
 
@@ -198,6 +234,7 @@ int main(int argc, char **argv) {
     foutput << "Score limit: " << NGram::getScore_lim() << endl;
     foutput << "Dice threshold: " << NGram::getDice_th() << endl;
 
+    /*
     foutput << "\n*** SOUNDEX ***" << endl;
     foutput << "Predictions: " << sndx_opts_cnt <<
             "\nSuccess: " << sndx_success <<
@@ -205,6 +242,7 @@ int main(int argc, char **argv) {
             "\nRecall: " << (double)sndx_success/total_wrds << endl;
     foutput << "Soundex parameters:" << endl;
     foutput << "Truncate to: " << Soundex::getTRUNC_TO() << endl;
+     */
 
     // Close files
     fmisspell.close();
@@ -243,7 +281,7 @@ void compute(vector<WordCase> *cases_db, int n, const vector<string> *dict,
     for (i = n; i < last; ++i) {
 
         cout << "Processing word: " << i << endl;
-        //GlobalEdit::get_options((*cases_db)[i], dict);
+        GlobalEdit::get_options((*cases_db)[i], dict);
         NGram::get_options((*cases_db)[i], dict_ngr_sort, dict);
         //Soundex::get_options_exact((*cases_db)[i], dict);
     }
